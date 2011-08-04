@@ -14,7 +14,7 @@
     <AssemblyName>PhotoAtomic.Reflection.Silverlight.Test.Web</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <SilverlightApplicationList>{4BEAB54D-9E62-4133-A94D-E30D62A5580A}|..\PhotoAtomic.Reflection.Silverlight.Test\PhotoAtomic.Reflection.Silverlight.Test.csproj|ClientBin|False</SilverlightApplicationList>
+    <SilverlightApplicationList>{4BEAB54D-9E62-4133-A94D-E30D62A5580A}|..\PhotoAtomic.Communication.Wcf.Silverlight.Test\PhotoAtomic.Communication.Wcf.Silverlight.Test.csproj|ClientBin|False</SilverlightApplicationList>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
@@ -59,8 +59,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ClientBin\PhotoAtomic.Reflection.Silverlight.Test.xap" />
-    <Content Include="PhotoAtomic.Reflection.Silverlight.TestTestPage.aspx" />
-    <Content Include="PhotoAtomic.Reflection.Silverlight.TestTestPage.html" />
+    <Content Include="PhotoAtomic.Communication.Wcf.Silverlight.TestTestPage.aspx" />
+    <Content Include="PhotoAtomic.Communication.Wcf.Silverlight.TestTestPage.html" />
     <Content Include="Silverlight.js" />
     <Content Include="TestService.svc" />
     <Content Include="Web.config" />

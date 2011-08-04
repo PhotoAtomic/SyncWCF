@@ -19,6 +19,8 @@ namespace PhotoAtomic.Reflection.Silverlight.Test.Web
 
         public int FaultingOperation(int value)
         {
+            //HINT: press F5 to continue: this exception is intentional
+            //it is used to verify the behavior of the library in case of exception
             throw new NotImplementedException();
         }
     }
