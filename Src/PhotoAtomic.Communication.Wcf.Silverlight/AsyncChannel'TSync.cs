@@ -17,11 +17,11 @@
         /// <summary>
         /// dictionary of the begin methods
         /// </summary>
-        private Dictionary<string, Delegate> beginMethods = new Dictionary<string, Delegate>();
+        private Dictionary<string, Delegate> beginOperations = new Dictionary<string, Delegate>();
         /// <summary>
         /// dictionary of the end methods
         /// </summary>
-        private Dictionary<string, Delegate> endMethods = new Dictionary<string, Delegate>();
+        private Dictionary<string, Delegate> endOperations = new Dictionary<string, Delegate>();
         /// <summary>
         /// async inner channel
         /// </summary>
@@ -42,7 +42,7 @@
             {
                 //Begin method
                 var beginMethod = proxyType.GetMethod(string.Format("Begin{0}",method.Name));
-                beginMethods.Add(
+                beginOperations.Add(
                     method.Name,
                     Delegate.CreateDelegate(
                         GetFuncDelegateTypeFor(beginMethod),
@@ -52,7 +52,7 @@
 
                 //EndMethod
                 var endMethod = proxyType.GetMethod(string.Format("End{0}", method.Name));
-                endMethods.Add(
+                endOperations.Add(
                     method.Name,
                     Delegate.CreateDelegate(
                         GetFuncDelegateTypeFor(endMethod),
@@ -69,10 +69,26 @@
         private Type GetFuncDelegateTypeFor(MethodInfo method)
         {
             var parameters = method.GetParameters();
-            var genericFunction = GetFunctionType(parameters.Length);
-            var parameterTypes = parameters.Select(x=>x.ParameterType).Union(new []{method.ReturnType}).ToArray();
-            var function = genericFunction.MakeGenericType(parameterTypes);
-            return function;
+            if (method.ReturnType != typeof(void))
+            {
+                var genericFunction = GetFunctionType(parameters.Length);
+                var parameterTypes = parameters.Select(x => x.ParameterType).Union(new[] { method.ReturnType }).ToArray();
+                var function = genericFunction.MakeGenericType(parameterTypes);
+                return function;
+            }
+            else
+            {
+                var genericAction = GetActionType(parameters.Length - 1);
+                var parameterTypes = 
+                    parameters
+                    .Select(x => x.ParameterType)
+                    .Union(new[] { method.ReturnType })
+                    .Take(parameters.Length)
+                    .ToArray();
+                
+                var function = genericAction.MakeGenericType(parameterTypes);
+                return function;
+            }
         }
 
         /// <summary>
@@ -106,6 +122,35 @@
         }
 
         /// <summary>
+        /// returns the correct action type with the required number of input parameres
+        /// </summary>
+        /// <param name="argumentNumber">the number of parameters of the action</param>
+        /// <returns>an action type with the correct number of parameters</returns>
+        private Type GetActionType(int argumentNumber)
+        {
+            switch (argumentNumber)
+            {
+                case 0: return typeof(Action<>);
+                case 1: return typeof(Action<,>);
+                case 2: return typeof(Action<,,>);
+                case 3: return typeof(Action<,,,>);
+                case 4: return typeof(Action<,,,,>);
+                case 5: return typeof(Action<,,,,,>);
+                case 6: return typeof(Action<,,,,,,>);
+                case 7: return typeof(Action<,,,,,,,>);
+                case 8: return typeof(Action<,,,,,,,,>);
+                case 9: return typeof(Action<,,,,,,,,,>);
+                case 10: return typeof(Action<,,,,,,,,,,>);
+                case 11: return typeof(Action<,,,,,,,,,,,>);
+                case 12: return typeof(Action<,,,,,,,,,,,,>);
+                case 13: return typeof(Action<,,,,,,,,,,,,,>);
+                case 14: return typeof(Action<,,,,,,,,,,,,,,>);
+                case 15: return typeof(Action<,,,,,,,,,,,,,,,>);                
+            }
+            throw new IndexOutOfRangeException("Function could have a maximum of 16 arguments");
+        }
+
+        /// <summary>
         /// Executes a synchronous operation defined on the Sync interface in an asynch fashon
         /// </summary>
         /// <typeparam name="TOut">the type of result expected from the invokation of the operaton</typeparam>
@@ -125,7 +170,7 @@
                 {
                     try
                     {
-                        TOut result = (TOut)endMethods[method.Method.Name].DynamicInvoke(asyncResult);
+                        TOut result = (TOut)endOperations[method.Method.Name].DynamicInvoke(asyncResult);
                         dispatcher.BeginInvoke(() => responseAction(result));
                     }
                     catch (Exception ex)
@@ -142,6 +187,82 @@
             IAsyncResult invokationResult = BeginInvokation(method.Method.Name, argumentsValues);
 
             return invokationResult;                       
+        }
+
+        /// <summary>
+        /// Executes a synchronous operation defined on the Sync interface in an asynch fashon
+        /// </summary>        
+        /// <param name="requestInvokation">the request to perform on the channel expressed as Sync</param>
+        /// <param name="responseAction">the action to perform when the reply arrives</param>
+        /// <returns>an IAsyncResult for the asyncronous operation, it could be useful to check when the operation is completed</returns>
+        public IAsyncResult ExecuteAsync(Expression<Action<TSync>> requestInvokation, Action responseAction, Action<Exception> onException = null)
+        {
+            var lambda = requestInvokation as LambdaExpression;
+            var method = lambda.Body as MethodCallExpression;
+
+            var argumentsValues = ExtractArgumentValuesList(method);
+
+            Dispatcher dispatcher = System.Windows.Deployment.Current.Dispatcher;
+
+            AsyncCallback callback = asyncResult =>
+            {
+                try
+                {
+                    endOperations[method.Method.Name].DynamicInvoke(asyncResult);
+                    dispatcher.BeginInvoke(responseAction);
+                }
+                catch (Exception ex)
+                {
+                    if (onException == null) return;
+                    Exception exception = ex.InnerException ?? ex;
+                    dispatcher.BeginInvoke(() => onException(ex));
+                }
+            };
+
+            argumentsValues.Add(callback);
+            argumentsValues.Add(null);
+
+            IAsyncResult invokationResult = BeginInvokation(method.Method.Name, argumentsValues);
+
+            return invokationResult;
+        }
+
+        /// <summary>
+        /// Executes a synchronous operation defined on the Sync interface in an asynch fashon
+        /// </summary>        
+        /// <param name="requestInvokation">the request to perform on the channel expressed as Sync</param>
+        /// <param name="responseAction">the action to perform when the reply arrives</param>
+        /// <returns>an IAsyncResult for the asyncronous operation, it could be useful to check when the operation is completed</returns>
+        public IAsyncResult ExecuteAsync(Expression<Action<TSync>> requestInvokation, object asyncState, Action<object> responseAction, Action<Exception> onException = null)
+        {
+            var lambda = requestInvokation as LambdaExpression;
+            var method = lambda.Body as MethodCallExpression;
+
+            var argumentsValues = ExtractArgumentValuesList(method);
+
+            Dispatcher dispatcher = System.Windows.Deployment.Current.Dispatcher;
+
+            AsyncCallback callback = asyncResult =>
+            {
+                try
+                {
+                    endOperations[method.Method.Name].DynamicInvoke(asyncResult);
+                    dispatcher.BeginInvoke(()=>responseAction(asyncResult.AsyncState));
+                }
+                catch (Exception ex)
+                {
+                    if (onException == null) return;
+                    Exception exception = ex.InnerException ?? ex;
+                    dispatcher.BeginInvoke(() => onException(ex));
+                }
+            };
+
+            argumentsValues.Add(callback);
+            argumentsValues.Add(asyncState);
+
+            IAsyncResult invokationResult = BeginInvokation(method.Method.Name, argumentsValues);
+
+            return invokationResult;
         }
 
         /// <summary>
@@ -165,7 +286,7 @@
             {
                 try
                 {
-                    TOut result = (TOut)endMethods[method.Method.Name].DynamicInvoke(asyncResult);
+                    TOut result = (TOut)endOperations[method.Method.Name].DynamicInvoke(asyncResult);
                     dispatcher.BeginInvoke(() => responseAction(result,asyncResult.AsyncState));
                 }
                 catch (Exception ex)
@@ -194,7 +315,7 @@
         private IAsyncResult BeginInvokation(string methodName, List<object> argumentsValues)
         {
             IAsyncResult invokationResult = (IAsyncResult)
-            beginMethods[methodName]
+            beginOperations[methodName]
                 .DynamicInvoke(argumentsValues.ToArray());
             return invokationResult;
         }
