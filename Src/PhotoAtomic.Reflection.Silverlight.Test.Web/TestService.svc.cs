@@ -11,9 +11,15 @@ namespace PhotoAtomic.Reflection.Silverlight.Test.Web
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
     public class TestService : ITestService
     {
-        public int Method(int value)
+        public int Operation(int value)
         {
             return value + 1;
+            
+        }
+
+        public int FaultingOperation(int value)
+        {
+            throw new NotImplementedException();
         }
     }
 }

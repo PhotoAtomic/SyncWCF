@@ -112,37 +112,110 @@
         /// <param name="requestInvokation">the request to perform on the channel expressed as Sync</param>
         /// <param name="responseAction">the action to perform when the reply arrives</param>
         /// <returns>an IAsyncResult for the asyncronous operation, it could be useful to check when the operation is completed</returns>
-        public IAsyncResult ExecuteAsync<TOut>(Expression<Func<TSync, TOut>> requestInvokation, Action<TOut> responseAction)
+        public IAsyncResult ExecuteAsync<TOut>(Expression<Func<TSync, TOut>> requestInvokation, Action<TOut> responseAction, Action<Exception> onException = null)
         {
             var lambda = requestInvokation as LambdaExpression;
             var method = lambda.Body as MethodCallExpression;
-            
-            var argumentsValues = 
-                method
-                .Arguments
-                .Select(x => 
-                    Expression
-                    .Lambda(x)
-                    .Compile()
-                    .DynamicInvoke(null))
-                .ToList();
+
+            var argumentsValues = ExtractArgumentValuesList(method);
             
             Dispatcher dispatcher = System.Windows.Deployment.Current.Dispatcher;
 
             AsyncCallback callback = asyncResult =>
                 {
-                    TOut result = (TOut)endMethods[method.Method.Name].DynamicInvoke(asyncResult);
-                    dispatcher.BeginInvoke(()=>responseAction(result));                   
+                    try
+                    {
+                        TOut result = (TOut)endMethods[method.Method.Name].DynamicInvoke(asyncResult);
+                        dispatcher.BeginInvoke(() => responseAction(result));
+                    }
+                    catch (Exception ex)
+                    {
+                        if (onException == null) return;
+                        Exception exception = ex.InnerException ?? ex;
+                        dispatcher.BeginInvoke(() => onException(ex));
+                    }
                 };
             
             argumentsValues.Add(callback);
             argumentsValues.Add(null);
 
-            IAsyncResult invokationResult = (IAsyncResult)
-            beginMethods[method.Method.Name]
-                .DynamicInvoke(argumentsValues.ToArray());
+            IAsyncResult invokationResult = BeginInvokation(method.Method.Name, argumentsValues);
 
             return invokationResult;                       
+        }
+
+        /// <summary>
+        /// Executes a synchronous operation defined on the Sync interface in an asynch fashon
+        /// </summary>
+        /// <typeparam name="TOut">the type of result expected from the invokation of the operaton</typeparam>
+        /// <param name="requestInvokation">the request to perform on the channel expressed as Sync</param>
+        /// <param name="asyncState">an user defined object to transmit to the ascyn reply of the operation</param>
+        /// <param name="responseAction">the action to perform when the reply arrives</param>
+        /// <returns>an IAsyncResult for the asyncronous operation, it could be useful to check when the operation is completed</returns>
+        public IAsyncResult ExecuteAsync<TOut>(Expression<Func<TSync, TOut>> requestInvokation, object asyncState, Action<TOut, object> responseAction, Action<Exception, object> onException = null)
+        {
+            var lambda = requestInvokation as LambdaExpression;
+            var method = lambda.Body as MethodCallExpression;
+
+            var argumentsValues = ExtractArgumentValuesList(method);
+
+            Dispatcher dispatcher = System.Windows.Deployment.Current.Dispatcher;
+
+            AsyncCallback callback = asyncResult =>
+            {
+                try
+                {
+                    TOut result = (TOut)endMethods[method.Method.Name].DynamicInvoke(asyncResult);
+                    dispatcher.BeginInvoke(() => responseAction(result,asyncResult.AsyncState));
+                }
+                catch (Exception ex)
+                {
+                    if (onException == null) return;
+                    Exception exception = ex.InnerException ?? ex;
+                    dispatcher.BeginInvoke(() => onException(ex,asyncResult.AsyncState));
+                }
+            };
+
+            argumentsValues.Add(callback);
+            argumentsValues.Add(asyncState);
+
+            IAsyncResult invokationResult = BeginInvokation(method.Method.Name, argumentsValues);
+
+            return invokationResult;
+        }
+
+
+        /// <summary>
+        /// begin the invokation of the method
+        /// </summary>
+        /// <param name="method">the method to invoke</param>
+        /// <param name="argumentsValues">parameters to pass to the method</param>
+        /// <returns>returns the asynch result status</returns>
+        private IAsyncResult BeginInvokation(string methodName, List<object> argumentsValues)
+        {
+            IAsyncResult invokationResult = (IAsyncResult)
+            beginMethods[methodName]
+                .DynamicInvoke(argumentsValues.ToArray());
+            return invokationResult;
+        }
+
+        /// <summary>
+        /// generates a list of argument values decoding the expression
+        /// </summary>
+        /// <param name="method">the method to decode</param>
+        /// <returns>a list ov values extracted fom the method request</returns>
+        private static List<object> ExtractArgumentValuesList(MethodCallExpression method)
+        {
+            var argumentsValues =
+                method
+                .Arguments
+                .Select(x =>
+                    Expression
+                    .Lambda(x)
+                    .Compile()
+                    .DynamicInvoke(null))
+                .ToList();
+            return argumentsValues;
         }
     }
 }

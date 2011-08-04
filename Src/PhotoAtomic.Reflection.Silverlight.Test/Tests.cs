@@ -44,7 +44,7 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
             int number = 0;
             var res = 
                 channel.ExecuteAsync(
-                    ws => ws.Method(1+4),
+                    ws => ws.Operation(1+4),
                     result => 
                     {
                         number = result+1;                        
@@ -90,6 +90,43 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
 
             var channel1 = channelFactory1.CreateChannel();
             var channel2 = channelFactory1.CreateChannel();
-        }       
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void InvokingFaultingOperation_Expected_ExceptionCatched()
+        {
+            var channelFactory = new AsyncChannelFactory<ITestService>();
+            var channel = channelFactory.CreateChannel();            
+            var res =
+                channel.ExecuteAsync(
+                    ws => ws.FaultingOperation(0),
+                    result =>
+                    {
+                        Assert.Fail();
+                    },
+                    exception =>
+                    {
+                        TestComplete();
+                    });
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void InvokingOperationPassingAState_Expected_StateReceived()
+        {
+            var channelFactory = new AsyncChannelFactory<ITestService>();
+            var channel = channelFactory.CreateChannel();
+            var res =
+                channel.ExecuteAsync(
+                    ws => ws.Operation(0),
+                    "status message",
+                    (result,status) =>
+                    {
+                        Assert.AreEqual("status message", status);
+                        TestComplete();
+                    });
+        }
+
     }
 }
