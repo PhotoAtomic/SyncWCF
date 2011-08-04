@@ -14,6 +14,28 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.Reflection.Silverlight.Test", "PhotoAtomic.Reflection.Silverlight.Test\PhotoAtomic.Reflection.Silverlight.Test.csproj", "{4BEAB54D-9E62-4133-A94D-E30D62A5580A}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = PhotoAtomic.Reflection.Silverlight.Test.Web\\PhotoAtomic.Reflection.Silverlight.Test.Web.csproj
+		SccProjectTopLevelParentUniqueName1 = PhotoAtomic.SyncWcf.sln
+		SccProjectName1 = PhotoAtomic.Reflection.Silverlight.Test.Web
+		SccLocalPath1 = PhotoAtomic.Reflection.Silverlight.Test.Web
+		SccProjectUniqueName2 = PhotoAtomic.Communication.Wcf.Silverlight\\PhotoAtomic.Communication.Wcf.Silverlight.csproj
+		SccProjectTopLevelParentUniqueName2 = PhotoAtomic.SyncWcf.sln
+		SccProjectName2 = PhotoAtomic.Communication.Wcf.Silverlight
+		SccLocalPath2 = PhotoAtomic.Communication.Wcf.Silverlight
+		SccProjectUniqueName3 = PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test\\PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.csproj
+		SccProjectTopLevelParentUniqueName3 = PhotoAtomic.SyncWcf.sln
+		SccProjectName3 = PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test
+		SccLocalPath3 = PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test
+		SccProjectUniqueName4 = PhotoAtomic.Reflection.Silverlight.Test\\PhotoAtomic.Reflection.Silverlight.Test.csproj
+		SccProjectTopLevelParentUniqueName4 = PhotoAtomic.SyncWcf.sln
+		SccProjectName4 = PhotoAtomic.Reflection.Silverlight.Test
+		SccLocalPath4 = PhotoAtomic.Reflection.Silverlight.Test
+	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Aptuit.BioLims.vsmdi
 	EndGlobalSection
@@ -43,8 +65,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{605742CB-A2D5-46C9-9805-A871A1684E44} = {CCE43E55-5844-4876-B6A4-DFDAA963076F}
 		{E3ECD1FE-0EFC-46A1-826F-DB77F177C95E} = {CCE43E55-5844-4876-B6A4-DFDAA963076F}
+		{605742CB-A2D5-46C9-9805-A871A1684E44} = {CCE43E55-5844-4876-B6A4-DFDAA963076F}
 		{4BEAB54D-9E62-4133-A94D-E30D62A5580A} = {CCE43E55-5844-4876-B6A4-DFDAA963076F}
 		{DCCA8373-40E8-4145-B7F2-E6325607AC4B} = {3593095D-1D3B-4464-87ED-4AB22262F622}
 	EndGlobalSection
