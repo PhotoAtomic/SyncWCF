@@ -1,0 +1,17 @@
+﻿<configuration>
+    <system.serviceModel>
+        <bindings>
+            <customBinding>
+                <binding name="CustomBinding_ITestService">
+                    <binaryMessageEncoding />
+                    <httpTransport maxReceivedMessageSize="2147483647" maxBufferSize="2147483647" />
+                </binding>
+            </customBinding>
+        </bindings>
+        <client>
+            <endpoint address="http://localhost:6155/TestService.svc" binding="customBinding"
+                bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.Async.ITestService"
+                name="CustomBinding_ITestService" />
+        </client>
+    </system.serviceModel>
+</configuration>

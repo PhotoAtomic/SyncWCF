@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{CCE43E55-5844-4876-B6A4-DFDAA963076F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{3593095D-1D3B-4464-87ED-4AB22262F622}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.Reflection.Silverlight.Test.Web", "PhotoAtomic.Reflection.Silverlight.Test.Web\PhotoAtomic.Reflection.Silverlight.Test.Web.csproj", "{E3ECD1FE-0EFC-46A1-826F-DB77F177C95E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.Communication.Wcf.Silverlight", "PhotoAtomic.Communication.Wcf.Silverlight\PhotoAtomic.Communication.Wcf.Silverlight.csproj", "{DCCA8373-40E8-4145-B7F2-E6325607AC4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test", "PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test\PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.csproj", "{605742CB-A2D5-46C9-9805-A871A1684E44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.Reflection.Silverlight.Test", "PhotoAtomic.Reflection.Silverlight.Test\PhotoAtomic.Reflection.Silverlight.Test.csproj", "{4BEAB54D-9E62-4133-A94D-E30D62A5580A}"
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = Aptuit.BioLims.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3ECD1FE-0EFC-46A1-826F-DB77F177C95E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3ECD1FE-0EFC-46A1-826F-DB77F177C95E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3ECD1FE-0EFC-46A1-826F-DB77F177C95E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3ECD1FE-0EFC-46A1-826F-DB77F177C95E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCCA8373-40E8-4145-B7F2-E6325607AC4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCCA8373-40E8-4145-B7F2-E6325607AC4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCCA8373-40E8-4145-B7F2-E6325607AC4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCCA8373-40E8-4145-B7F2-E6325607AC4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{605742CB-A2D5-46C9-9805-A871A1684E44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{605742CB-A2D5-46C9-9805-A871A1684E44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{605742CB-A2D5-46C9-9805-A871A1684E44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{605742CB-A2D5-46C9-9805-A871A1684E44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BEAB54D-9E62-4133-A94D-E30D62A5580A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BEAB54D-9E62-4133-A94D-E30D62A5580A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BEAB54D-9E62-4133-A94D-E30D62A5580A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BEAB54D-9E62-4133-A94D-E30D62A5580A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{605742CB-A2D5-46C9-9805-A871A1684E44} = {CCE43E55-5844-4876-B6A4-DFDAA963076F}
+		{E3ECD1FE-0EFC-46A1-826F-DB77F177C95E} = {CCE43E55-5844-4876-B6A4-DFDAA963076F}
+		{4BEAB54D-9E62-4133-A94D-E30D62A5580A} = {CCE43E55-5844-4876-B6A4-DFDAA963076F}
+		{DCCA8373-40E8-4145-B7F2-E6325607AC4B} = {3593095D-1D3B-4464-87ED-4AB22262F622}
+	EndGlobalSection
+EndGlobal
