@@ -10,6 +10,9 @@ namespace PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test
     public interface ITestService
     {
         [OperationContract]
-        int Method(int value);
+        int Operation(int value);
+
+        [OperationContract]
+        int FaultingOperation(int value);
     }
 }
