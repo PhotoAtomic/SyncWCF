@@ -103,6 +103,7 @@
     </Compile>
     <Compile Include="ISyncInterface.cs" />
     <Compile Include="ISyncInterface2.cs" />
+    <Compile Include="ISyncInterfaceVoid.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests.cs" />
   </ItemGroup>

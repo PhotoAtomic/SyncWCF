@@ -42,13 +42,13 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
             var channelFactory = new AsyncChannelFactory<ITestService>();
             var channel = channelFactory.CreateChannel();
             int number = 0;
-            var res = 
+            var res =
                 channel.ExecuteAsync(
-                    ws => ws.Operation(1+4),
-                    result => 
+                    ws => ws.Operation(1 + 4),
+                    result =>
                     {
-                        number = result+1;                        
-                        Assert.AreEqual(number, 7);                        
+                        number = result + 1;
+                        Assert.AreEqual(number, 7);
                         TestComplete();
                     });
 
@@ -97,7 +97,7 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
         public void InvokingFaultingOperation_Expected_ExceptionCatched()
         {
             var channelFactory = new AsyncChannelFactory<ITestService>();
-            var channel = channelFactory.CreateChannel();            
+            var channel = channelFactory.CreateChannel();
             var res =
                 channel.ExecuteAsync(
                     ws => ws.FaultingOperation(0),
@@ -121,9 +121,24 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
                 channel.ExecuteAsync(
                     ws => ws.Operation(0),
                     "status message",
-                    (result,status) =>
+                    (result, status) =>
                     {
                         Assert.AreEqual("status message", status);
+                        TestComplete();
+                    });
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void InvokingVoidOperation_Expected_OperationInvoked()
+        {
+            var channelFactory = new AsyncChannelFactory<ITestService>();
+            var channel = channelFactory.CreateChannel();
+            var res =
+                channel.ExecuteAsync(
+                    ws => ws.VoidOperation(0),                    
+                    () =>
+                    {                        
                         TestComplete();
                     });
         }

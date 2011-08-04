@@ -11,6 +11,16 @@
     public class AsyncChannelFactory<TSync> where TSync : class
     {
         /// <summary>
+        /// Credential UserName
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// Credential Password
+        /// </summary>
+        public string Password { get; set; }
+
+        /// <summary>
         /// generated an async channel for the specified sync type
         /// </summary>
         /// <param name="configurationName">configuration name (it will be used to retrieve the configuration in the configuration file for WCF)</param>
@@ -30,6 +40,10 @@
             Type factoryType = genericFactoryType.MakeGenericType(new[] { asynchType });
 
             ChannelFactory channelFactory = (ChannelFactory)Activator.CreateInstance(factoryType, configurationName);
+
+            channelFactory.Credentials.UserName.UserName = UserName;
+            channelFactory.Credentials.UserName.UserName = Password;
+
             var createChannelMethod = factoryType.GetMethod("CreateChannel", new Type[0]);
             IChannel channel = (IChannel)createChannelMethod.Invoke(channelFactory, null);
 

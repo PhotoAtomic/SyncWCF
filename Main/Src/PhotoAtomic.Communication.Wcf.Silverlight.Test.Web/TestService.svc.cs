@@ -23,5 +23,10 @@ namespace PhotoAtomic.Reflection.Silverlight.Test.Web
             //it is used to verify the behavior of the library in case of exception
             throw new NotImplementedException();
         }
+
+
+        public void VoidOperation(int value)
+        {            
+        }
     }
 }

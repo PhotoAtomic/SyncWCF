@@ -14,5 +14,8 @@ namespace PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test
 
         [OperationContract]
         int FaultingOperation(int value);
+
+        [OperationContract]
+        void VoidOperation(int value);
     }
 }
