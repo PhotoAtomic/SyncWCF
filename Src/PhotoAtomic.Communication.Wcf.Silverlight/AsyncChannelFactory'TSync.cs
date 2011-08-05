@@ -42,7 +42,7 @@
             ChannelFactory channelFactory = (ChannelFactory)Activator.CreateInstance(factoryType, configurationName);
 
             channelFactory.Credentials.UserName.UserName = UserName;
-            channelFactory.Credentials.UserName.UserName = Password;
+            channelFactory.Credentials.UserName.Password = Password;
 
             var createChannelMethod = factoryType.GetMethod("CreateChannel", new Type[0]);
             IChannel channel = (IChannel)createChannelMethod.Invoke(channelFactory, null);
