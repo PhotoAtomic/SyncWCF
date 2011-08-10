@@ -60,6 +60,7 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assigner.cs" />
     <Compile Include="AsyncChannel%27TSync.cs" />
     <Compile Include="AsyncChannelFactory%27TSync.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

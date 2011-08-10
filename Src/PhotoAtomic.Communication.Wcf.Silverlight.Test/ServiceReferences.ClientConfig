@@ -9,9 +9,12 @@
             </customBinding>
         </bindings>
         <client>
-            <endpoint address="http://localhost:6155/TestService.svc" binding="customBinding"
-                bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.Async.ITestService"
-                name="CustomBinding_ITestService" />
+          <endpoint address="http://localhost:6155/TestService.svc" binding="customBinding"
+            bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.Async.ITestService"
+            name="CustomBinding_ITestService" />
+          <endpoint address="http://localhost:6155/TestServiceOut.svc" binding="customBinding"
+            bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.Async.ITestServiceOut"
+            name="CustomBinding_ITestServiceOut" />
         </client>
     </system.serviceModel>
 </configuration>

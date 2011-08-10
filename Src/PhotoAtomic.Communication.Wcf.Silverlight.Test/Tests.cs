@@ -136,9 +136,27 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
             var channel = channelFactory.CreateChannel();
             var res =
                 channel.ExecuteAsync(
-                    ws => ws.VoidOperation(0),                    
+                    ws => ws.VoidOperation(0),
                     () =>
-                    {                        
+                    {
+                        TestComplete();
+                    });
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void InvokingOutOperation_Expected_OperationInvoked()
+        {
+            var channelFactory = new AsyncChannelFactory<ITestServiceOut>();
+            var channel = channelFactory.CreateChannel();
+            int a = 1;
+            int b;
+            var res =
+                channel.ExecuteAsync(
+                    ws => ws.Method(ref a),
+                    () =>
+                    {
+                        Assert.AreEqual(9, a);
                         TestComplete();
                     });
         }

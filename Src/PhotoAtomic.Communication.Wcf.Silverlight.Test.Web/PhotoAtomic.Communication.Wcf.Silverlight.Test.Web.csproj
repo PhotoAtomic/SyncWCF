@@ -63,6 +63,7 @@
     <Content Include="PhotoAtomic.Communication.Wcf.Silverlight.TestTestPage.html" />
     <Content Include="Silverlight.js" />
     <Content Include="TestService.svc" />
+    <Content Include="TestServiceOut.svc" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -76,6 +77,9 @@
     <Compile Include="SilverlightFaultBehavior.cs" />
     <Compile Include="TestService.svc.cs">
       <DependentUpon>TestService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="TestServiceOut.svc.cs">
+      <DependentUpon>TestServiceOut.svc</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

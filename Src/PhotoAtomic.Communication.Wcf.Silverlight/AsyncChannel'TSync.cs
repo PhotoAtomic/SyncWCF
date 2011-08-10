@@ -69,85 +69,11 @@
         private Type GetFuncDelegateTypeFor(MethodInfo method)
         {
             var parameters = method.GetParameters();
-            if (method.ReturnType != typeof(void))
-            {
-                var genericFunction = GetFunctionType(parameters.Length);
-                var parameterTypes = parameters.Select(x => x.ParameterType).Union(new[] { method.ReturnType }).ToArray();
-                var function = genericFunction.MakeGenericType(parameterTypes);
-                return function;
-            }
-            else
-            {
-                var genericAction = GetActionType(parameters.Length - 1);
-                var parameterTypes = 
-                    parameters
-                    .Select(x => x.ParameterType)
-                    .Union(new[] { method.ReturnType })
-                    .Take(parameters.Length)
-                    .ToArray();
-                
-                var function = genericAction.MakeGenericType(parameterTypes);
-                return function;
-            }
-        }
+            var parameterTypes = parameters.Select(x => x.ParameterType).ToList();
 
-        /// <summary>
-        /// returns the correct func type with the required number of input parameres
-        /// </summary>
-        /// <param name="argumentNumber">the number of parameters of the function</param>
-        /// <returns>a func type with the correct number of parameters</returns>
-        private Type GetFunctionType(int argumentNumber)
-        {
-            switch (argumentNumber)
-            {
-                case 0: return typeof(Func<>);
-                case 1: return typeof(Func<,>);
-                case 2: return typeof(Func<,,>);
-                case 3: return typeof(Func<,,,>);
-                case 4: return typeof(Func<,,,,>);
-                case 5: return typeof(Func<,,,,,>);
-                case 6: return typeof(Func<,,,,,,>);
-                case 7: return typeof(Func<,,,,,,,>);
-                case 8: return typeof(Func<,,,,,,,,>);
-                case 9: return typeof(Func<,,,,,,,,,>);
-                case 10: return typeof(Func<,,,,,,,,,,>);
-                case 11: return typeof(Func<,,,,,,,,,,,>);
-                case 12: return typeof(Func<,,,,,,,,,,,,>);
-                case 13: return typeof(Func<,,,,,,,,,,,,,>);
-                case 14: return typeof(Func<,,,,,,,,,,,,,,>);
-                case 15: return typeof(Func<,,,,,,,,,,,,,,,>);
-                case 16: return typeof(Func<,,,,,,,,,,,,,,,,>);
-            }
-            throw new IndexOutOfRangeException("Function could have a maximum of 16 arguments");
-        }
+            parameterTypes.Add(method.ReturnType);
 
-        /// <summary>
-        /// returns the correct action type with the required number of input parameres
-        /// </summary>
-        /// <param name="argumentNumber">the number of parameters of the action</param>
-        /// <returns>an action type with the correct number of parameters</returns>
-        private Type GetActionType(int argumentNumber)
-        {
-            switch (argumentNumber)
-            {
-                case 0: return typeof(Action<>);
-                case 1: return typeof(Action<,>);
-                case 2: return typeof(Action<,,>);
-                case 3: return typeof(Action<,,,>);
-                case 4: return typeof(Action<,,,,>);
-                case 5: return typeof(Action<,,,,,>);
-                case 6: return typeof(Action<,,,,,,>);
-                case 7: return typeof(Action<,,,,,,,>);
-                case 8: return typeof(Action<,,,,,,,,>);
-                case 9: return typeof(Action<,,,,,,,,,>);
-                case 10: return typeof(Action<,,,,,,,,,,>);
-                case 11: return typeof(Action<,,,,,,,,,,,>);
-                case 12: return typeof(Action<,,,,,,,,,,,,>);
-                case 13: return typeof(Action<,,,,,,,,,,,,,>);
-                case 14: return typeof(Action<,,,,,,,,,,,,,,>);
-                case 15: return typeof(Action<,,,,,,,,,,,,,,,>);                
-            }
-            throw new IndexOutOfRangeException("Function could have a maximum of 16 arguments");
+            return Expression.GetDelegateType(parameterTypes.ToArray());
         }
 
         /// <summary>
@@ -170,8 +96,14 @@
                 {
                     try
                     {
-                        TOut result = (TOut)endOperations[method.Method.Name].DynamicInvoke(asyncResult);
-                        dispatcher.BeginInvoke(() => responseAction(result));
+                        var parameters = Enumerable.Repeat<object>(null, method.Arguments.Count + 1).ToArray();
+                        parameters[method.Arguments.Count] = asyncResult;   
+                        TOut result = (TOut)endOperations[method.Method.Name].DynamicInvoke(parameters);
+                        dispatcher.BeginInvoke(() =>
+                            {
+                                new Assigner<TSync>().Assign(requestInvokation, parameters);
+                                responseAction(result); 
+                            });
                     }
                     catch (Exception ex)
                     {
@@ -208,8 +140,14 @@
             {
                 try
                 {
-                    endOperations[method.Method.Name].DynamicInvoke(asyncResult);
-                    dispatcher.BeginInvoke(responseAction);
+                    var parameters = Enumerable.Repeat<object>(null, method.Arguments.Count + 1).ToArray();
+                    parameters[method.Arguments.Count] = asyncResult;                    
+                    endOperations[method.Method.Name].DynamicInvoke(parameters);
+                    dispatcher.BeginInvoke(()=>
+                        {
+                            new Assigner<TSync>().Assign(requestInvokation, parameters);
+                            responseAction();
+                        });
                 }
                 catch (Exception ex)
                 {
@@ -246,8 +184,15 @@
             {
                 try
                 {
-                    endOperations[method.Method.Name].DynamicInvoke(asyncResult);
-                    dispatcher.BeginInvoke(()=>responseAction(asyncResult.AsyncState));
+                    var parameters = Enumerable.Repeat<object>(null, method.Arguments.Count + 1).ToArray();
+                    parameters[method.Arguments.Count] = asyncResult;   
+
+                    endOperations[method.Method.Name].DynamicInvoke(parameters);
+                    dispatcher.BeginInvoke(()=>
+                        {
+                            new Assigner<TSync>().Assign(requestInvokation, parameters);
+                            responseAction(asyncResult.AsyncState);
+                        });
                 }
                 catch (Exception ex)
                 {
@@ -286,8 +231,14 @@
             {
                 try
                 {
-                    TOut result = (TOut)endOperations[method.Method.Name].DynamicInvoke(asyncResult);
-                    dispatcher.BeginInvoke(() => responseAction(result,asyncResult.AsyncState));
+                    var parameters = Enumerable.Repeat<object>(null, method.Arguments.Count + 1).ToArray();
+                    parameters[method.Arguments.Count] = asyncResult;   
+                    TOut result = (TOut)endOperations[method.Method.Name].DynamicInvoke(parameters);
+                    dispatcher.BeginInvoke(() =>
+                        {
+                            new Assigner<TSync>().Assign(requestInvokation, parameters);
+                            responseAction(result, asyncResult.AsyncState);
+                        });
                 }
                 catch (Exception ex)
                 {
