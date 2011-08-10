@@ -9,5 +9,8 @@ namespace PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test
 
         [OperationContract]
         void MethodVoid(ref int a);
+
+        [OperationContract]
+        ComplexDataType ComplexMethod(ref ComplexDataType param);       
     }
 }

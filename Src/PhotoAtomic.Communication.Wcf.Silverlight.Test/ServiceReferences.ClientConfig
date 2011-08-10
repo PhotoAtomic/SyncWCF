@@ -15,6 +15,9 @@
           <endpoint address="http://localhost:6155/TestServiceOut.svc" binding="customBinding"
             bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.Async.ITestServiceOut"
             name="CustomBinding_ITestServiceOut" />
+          <endpoint address="http://localhost:6155/TestServiceOut2.svc" binding="customBinding"
+            bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test.Async.ITestServiceOut"
+            name="CustomBinding_ITestServiceOut2" />
         </client>
     </system.serviceModel>
 </configuration>

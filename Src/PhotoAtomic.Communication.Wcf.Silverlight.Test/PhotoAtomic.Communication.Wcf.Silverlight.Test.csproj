@@ -126,6 +126,10 @@
       <Project>{605742CB-A2D5-46C9-9805-A871A1684E44}</Project>
       <Name>PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test\PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test.csproj">
+      <Project>{7F5DB277-9F03-467B-90F8-8AB70B5AC4DD}</Project>
+      <Name>PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PhotoAtomic.Communication.Wcf.Silverlight\PhotoAtomic.Communication.Wcf.Silverlight.csproj">
       <Project>{DCCA8373-40E8-4145-B7F2-E6325607AC4B}</Project>
       <Name>PhotoAtomic.Communication.Wcf.Silverlight</Name>

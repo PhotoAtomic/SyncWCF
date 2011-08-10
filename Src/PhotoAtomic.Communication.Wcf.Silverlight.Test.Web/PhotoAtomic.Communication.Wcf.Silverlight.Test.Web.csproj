@@ -64,6 +64,7 @@
     <Content Include="Silverlight.js" />
     <Content Include="TestService.svc" />
     <Content Include="TestServiceOut.svc" />
+    <Content Include="TestServiceOut2.svc" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -81,11 +82,18 @@
     <Compile Include="TestServiceOut.svc.cs">
       <DependentUpon>TestServiceOut.svc</DependentUpon>
     </Compile>
+    <Compile Include="TestServiceOut2.svc.cs">
+      <DependentUpon>TestServiceOut2.svc</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test\PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.csproj">
       <Project>{605742CB-A2D5-46C9-9805-A871A1684E44}</Project>
       <Name>PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test\PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test.csproj">
+      <Project>{7F5DB277-9F03-467B-90F8-8AB70B5AC4DD}</Project>
+      <Name>PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

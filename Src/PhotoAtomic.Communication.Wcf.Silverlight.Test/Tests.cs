@@ -11,6 +11,7 @@ using System.Windows.Shapes;
 using Microsoft.Silverlight.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test;
+using duplicate = PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test;
 using PhotoAtomic.Communication.Wcf.Silverlight;
 using System.Threading;
 
@@ -150,13 +151,58 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
             var channelFactory = new AsyncChannelFactory<ITestServiceOut>();
             var channel = channelFactory.CreateChannel();
             int a = 1;
-            int b;
             var res =
                 channel.ExecuteAsync(
                     ws => ws.Method(ref a),
                     () =>
                     {
                         Assert.AreEqual(9, a);
+                        TestComplete();
+                    });
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void InvokingComplexOperation_Expected_OperationInvoked()
+        {
+            var channelFactory = new AsyncChannelFactory<ITestServiceOut>();
+            var channel = channelFactory.CreateChannel();
+            ComplexDataType data = new ComplexDataType
+                {
+                     Description = "in",
+                     Name = "in name",
+                     Id = 0,                
+                };
+
+            var result =
+                channel.ExecuteAsync(
+                    ws => ws.ComplexMethod(ref data),
+                    res =>
+                    {
+                        Assert.AreEqual("ref", data.Description);
+                        Assert.AreEqual("ref name", data.Name);
+                        Assert.AreEqual(1, data.Id);
+
+                        Assert.AreEqual("out", res.Description);
+                        Assert.AreEqual("out name", res.Name);
+                        Assert.AreEqual(2, res.Id);
+                        TestComplete();
+                    });                    
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void InvokingOutOperation2_Expected_OperationInvoked()
+        {
+            var channelFactory = new AsyncChannelFactory<duplicate.ITestServiceOut>();
+            var channel = channelFactory.CreateChannel();
+            int a = 1;            
+            var res =
+                channel.ExecuteAsync(
+                    ws => ws.Method(ref a),
+                    () =>
+                    {
+                        Assert.AreEqual(29, a);
                         TestComplete();
                     });
         }
