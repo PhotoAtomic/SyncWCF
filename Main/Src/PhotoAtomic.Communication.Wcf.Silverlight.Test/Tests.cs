@@ -51,8 +51,7 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
                         number = result + 1;
                         Assert.AreEqual(number, 7);
                         TestComplete();
-                    });
-
+                    });            
         }
 
         [TestMethod]
@@ -126,7 +125,7 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
                     {
                         Assert.AreEqual("status message", status);
                         TestComplete();
-                    });
+                    });            
         }
 
         [TestMethod]
@@ -204,7 +203,8 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
                     {
                         Assert.AreEqual(29, a);
                         TestComplete();
-                    });
+                    });            
+            
         }
 
     }
