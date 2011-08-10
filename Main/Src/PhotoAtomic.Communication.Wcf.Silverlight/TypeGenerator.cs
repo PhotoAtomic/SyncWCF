@@ -19,6 +19,11 @@
         private static Dictionary<Type, Type> asyncTypeCache = new Dictionary<Type, Type>();      
 
         /// <summary>
+        /// provides a cache for the modules
+        /// </summary>
+        private static Dictionary<string, ModuleBuilder> moduleBuilderCache = new Dictionary<string, ModuleBuilder>();
+
+        /// <summary>
         /// Generates the Async version of the TSync type.
         /// the generate type repects the AsyncPattern and it is already decorated with attributes for WCF operations
         /// </summary>
@@ -70,11 +75,28 @@
         /// <param name="method">information about the sync version of the method</param>
         private void AddEndAsynchVersionForMethod(TypeBuilder typeBuilder, MethodInfo method)
         {
+
             string endMethodName = string.Format("End{0}", method.Name);
 
-            var parametersTypeList = new []{typeof(IAsyncResult)};
-            var parametersAttributeList = new []{ParameterAttributes.None};
-            var parametersNameList = new[]{"asyncResult"};
+            var parameters =
+                method.GetParameters()
+                .Select(x =>
+                    new
+                    {
+                        Type = x.ParameterType,
+                        Name = x.Name,
+                        Attributes = x.Attributes,
+                    })
+                .ToList();
+
+            parameters.Add(
+                new
+                {
+                    Type = typeof(IAsyncResult),
+                    Name = "asyncResult",
+                    Attributes = ParameterAttributes.None,
+                });
+
 
             var methodBuilder =
                 typeBuilder
@@ -83,11 +105,12 @@
                     method.Attributes,
                     method.CallingConvention,
                     method.ReturnType,
-                    parametersTypeList.ToArray());
+                    parameters.Select(x=>x.Type).ToArray());
 
-            for (int i = 0; i < parametersTypeList.Count(); i++)
+            for (int i = 0; i < parameters.Count(); i++)
             {
-                methodBuilder.DefineParameter(i + 1, parametersAttributeList[i], parametersNameList[i]);
+                var parameter = parameters[i];
+                methodBuilder.DefineParameter(i + 1, parameter.Attributes, parameter.Name);             
             }
         }
 
@@ -147,6 +170,12 @@
         /// <remarks>in this version the model builder is not cached, it could be interesting to generate all the types in the same assembly by caching the model builder</remarks>
         private ModuleBuilder GetModuleBuilder(string requiredAssemblyName)
         {
+
+            if(moduleBuilderCache.ContainsKey(requiredAssemblyName))
+            {
+                return moduleBuilderCache[requiredAssemblyName];
+            }
+
             AssemblyName assemblyName = new AssemblyName(requiredAssemblyName);
             AssemblyBuilder assemblyBuilder =
                 AppDomain.CurrentDomain.DefineDynamicAssembly(
@@ -154,6 +183,9 @@
                     AssemblyBuilderAccess.Run);
             
             ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name);
+
+            moduleBuilderCache[requiredAssemblyName] = moduleBuilder;
+
             return moduleBuilder;
         }
     }

@@ -44,6 +44,7 @@
     <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ITestServiceOut.cs" />
     <Compile Include="ITestService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
