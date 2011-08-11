@@ -12,8 +12,8 @@ using Microsoft.Silverlight.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test;
 using duplicate = PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test;
-using PhotoAtomic.Communication.Wcf.Silverlight;
 using System.Threading;
+using PhotoAtomic.SyncWcf;
 
 namespace PhotoAtomic.Reflection.Silverlight.Test
 {

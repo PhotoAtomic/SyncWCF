@@ -1,4 +1,4 @@
-﻿namespace PhotoAtomic.Communication.Wcf.Silverlight
+﻿namespace PhotoAtomic.SyncWcf
 {
     using System;
     using System.Collections.Generic;
@@ -30,9 +30,9 @@
         /// <summary>
         /// creates and initialize an AsyncChannel
         /// </summary>
-        /// <param name="asynchType">the async type used internally by the inner channel</param>
+        /// 
         /// <param name="channel">the inner channel</param>
-        protected internal AsyncChannel(Type asynchType, IChannel channel)
+        protected internal AsyncChannel(IChannel channel)
         {
             var syncType = typeof(TSync);
             var proxyType = channel.GetType();
