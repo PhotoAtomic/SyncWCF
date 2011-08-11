@@ -5,8 +5,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{CCE43E55-5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{3593095D-1D3B-4464-87ED-4AB22262F622}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.Communication.Wcf.Silverlight", "PhotoAtomic.Communication.Wcf.Silverlight\PhotoAtomic.Communication.Wcf.Silverlight.csproj", "{DCCA8373-40E8-4145-B7F2-E6325607AC4B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test", "PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test\PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.csproj", "{605742CB-A2D5-46C9-9805-A871A1684E44}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.Communication.Wcf.Silverlight.Test", "PhotoAtomic.Communication.Wcf.Silverlight.Test\PhotoAtomic.Communication.Wcf.Silverlight.Test.csproj", "{4BEAB54D-9E62-4133-A94D-E30D62A5580A}"
@@ -15,32 +13,34 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.Communication.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test", "PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test\PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test.csproj", "{7F5DB277-9F03-467B-90F8-8AB70B5AC4DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.SyncWcf", "PhotoAtomic.SyncWcf\PhotoAtomic.SyncWcf.csproj", "{DCCA8373-40E8-4145-B7F2-E6325607AC4B}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 6
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = PhotoAtomic.Communication.Wcf.Silverlight\\PhotoAtomic.Communication.Wcf.Silverlight.csproj
+		SccProjectUniqueName1 = PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test\\PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.csproj
 		SccProjectTopLevelParentUniqueName1 = PhotoAtomic.SyncWcf.sln
-		SccProjectName1 = PhotoAtomic.Communication.Wcf.Silverlight
-		SccLocalPath1 = PhotoAtomic.Communication.Wcf.Silverlight
-		SccProjectUniqueName2 = PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test\\PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.csproj
+		SccProjectName1 = PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test
+		SccLocalPath1 = PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test
+		SccProjectUniqueName2 = PhotoAtomic.Communication.Wcf.Silverlight.Test\\PhotoAtomic.Communication.Wcf.Silverlight.Test.csproj
 		SccProjectTopLevelParentUniqueName2 = PhotoAtomic.SyncWcf.sln
-		SccProjectName2 = PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test
-		SccLocalPath2 = PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test
-		SccProjectUniqueName3 = PhotoAtomic.Communication.Wcf.Silverlight.Test\\PhotoAtomic.Communication.Wcf.Silverlight.Test.csproj
+		SccProjectName2 = PhotoAtomic.Communication.Wcf.Silverlight.Test
+		SccLocalPath2 = PhotoAtomic.Communication.Wcf.Silverlight.Test
+		SccProjectUniqueName3 = PhotoAtomic.Communication.Wcf.Silverlight.Test.Web\\PhotoAtomic.Communication.Wcf.Silverlight.Test.Web.csproj
 		SccProjectTopLevelParentUniqueName3 = PhotoAtomic.SyncWcf.sln
-		SccProjectName3 = PhotoAtomic.Communication.Wcf.Silverlight.Test
-		SccLocalPath3 = PhotoAtomic.Communication.Wcf.Silverlight.Test
-		SccProjectUniqueName4 = PhotoAtomic.Communication.Wcf.Silverlight.Test.Web\\PhotoAtomic.Communication.Wcf.Silverlight.Test.Web.csproj
+		SccProjectName3 = PhotoAtomic.Communication.Wcf.Silverlight.Test.Web
+		SccLocalPath3 = PhotoAtomic.Communication.Wcf.Silverlight.Test.Web
+		SccProjectUniqueName4 = PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test\\PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test.csproj
 		SccProjectTopLevelParentUniqueName4 = PhotoAtomic.SyncWcf.sln
-		SccProjectName4 = PhotoAtomic.Communication.Wcf.Silverlight.Test.Web
-		SccLocalPath4 = PhotoAtomic.Communication.Wcf.Silverlight.Test.Web
-		SccProjectUniqueName5 = PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test\\PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test.csproj
+		SccProjectName4 = PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test
+		SccLocalPath4 = PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test
+		SccProjectUniqueName5 = PhotoAtomic.SyncWcf\\PhotoAtomic.SyncWcf.csproj
 		SccProjectTopLevelParentUniqueName5 = PhotoAtomic.SyncWcf.sln
-		SccProjectName5 = PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test
-		SccLocalPath5 = PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test
+		SccProjectName5 = PhotoAtomic.SyncWcf
+		SccLocalPath5 = PhotoAtomic.SyncWcf
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Aptuit.BioLims.vsmdi
@@ -50,10 +50,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DCCA8373-40E8-4145-B7F2-E6325607AC4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DCCA8373-40E8-4145-B7F2-E6325607AC4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DCCA8373-40E8-4145-B7F2-E6325607AC4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DCCA8373-40E8-4145-B7F2-E6325607AC4B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{605742CB-A2D5-46C9-9805-A871A1684E44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{605742CB-A2D5-46C9-9805-A871A1684E44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{605742CB-A2D5-46C9-9805-A871A1684E44}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -70,6 +66,10 @@ Global
 		{7F5DB277-9F03-467B-90F8-8AB70B5AC4DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F5DB277-9F03-467B-90F8-8AB70B5AC4DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F5DB277-9F03-467B-90F8-8AB70B5AC4DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCCA8373-40E8-4145-B7F2-E6325607AC4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCCA8373-40E8-4145-B7F2-E6325607AC4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCCA8373-40E8-4145-B7F2-E6325607AC4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCCA8373-40E8-4145-B7F2-E6325607AC4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

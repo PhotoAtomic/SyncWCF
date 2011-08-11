@@ -13,8 +13,7 @@ namespace PhotoAtomic.Reflection.Silverlight.Test.Web
     {
         public int Operation(int value)
         {
-            return value + 1;
-            
+            return value + 1;            
         }
 
         public int FaultingOperation(int value)

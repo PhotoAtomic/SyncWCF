@@ -1,4 +1,4 @@
-﻿namespace PhotoAtomic.Communication.Wcf.Silverlight
+﻿namespace PhotoAtomic.SyncWcf
 {
     using System;
     using System.Collections.Generic;
