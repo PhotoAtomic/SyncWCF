@@ -7,6 +7,7 @@
     using System.Reflection;
     using System.ServiceModel.Channels;
     using System.Windows.Threading;
+using System.ServiceModel;
 
     /// <summary>
     /// represent an async channel that could be used to invoke the server
@@ -26,6 +27,17 @@
         /// async inner channel
         /// </summary>
         private IChannel channel;
+
+        /// <summary>
+        /// Gets the current state of the communication-oriented object.
+        /// </summary>
+        public CommunicationState State
+        {
+            get
+            {
+                return channel.State;
+            }
+        }
 
         /// <summary>
         /// creates and initialize an AsyncChannel
@@ -104,6 +116,7 @@
                     dispatcher.BeginInvoke(()=>
                         {
                             new Assigner<TSync>().Assign(requestInvokation, parameters);
+                            if (responseAction == null) return;
                             responseAction(asyncResult.AsyncState);
                         });
                 }
@@ -151,6 +164,7 @@
                     dispatcher.BeginInvoke(() =>
                         {
                             new Assigner<TSync>().Assign(requestInvokation, parameters);
+                            if (responseAction == null) return;
                             responseAction(result, asyncResult.AsyncState);
                         });
                 }
@@ -169,7 +183,6 @@
 
             return invokationResult;
         }
-
 
         /// <summary>
         /// begin the invokation of the method

@@ -14,6 +14,7 @@ using PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test;
 using duplicate = PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test;
 using System.Threading;
 using PhotoAtomic.SyncWcf;
+using System.ServiceModel;
 
 namespace PhotoAtomic.Reflection.Silverlight.Test
 {
@@ -207,5 +208,89 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
             
         }
 
+        [TestMethod]
+        [Asynchronous]
+        public void InvokingCorrectlyWorkingOperation_Expected_OperationStatusChangeToOpened()
+        {
+            var channelFactory = new AsyncChannelFactory<ITestService>();
+            var channel = channelFactory.CreateChannel();
+            Assert.AreEqual(CommunicationState.Created, channel.State);
+            var res =
+                channel.ExecuteAsync(
+                    ws => ws.Operation(0),
+                    () =>
+                    {
+                        Assert.AreEqual(CommunicationState.Opened, channel.State);
+                        TestComplete();
+                    });
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void OpenService_Expected_ServiceOpen()
+        {
+            var channelFactory = new AsyncChannelFactory<ITestService>();
+            var channel = channelFactory.CreateChannel();
+            Assert.AreEqual(CommunicationState.Created, channel.State);
+            channel.Open(() =>
+            {
+                Assert.AreEqual(CommunicationState.Opened, channel.State);
+                TestComplete();
+            });            
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void AbortingAnOpenService_Expected_ServiceClosed()
+        {
+            var channelFactory = new AsyncChannelFactory<ITestService>();
+            var channel = channelFactory.CreateChannel();
+            Assert.AreEqual(CommunicationState.Created, channel.State);
+            channel.Open(() =>
+            {
+                Assert.AreEqual(CommunicationState.Opened, channel.State);
+                channel.Abort();
+                Assert.AreEqual(CommunicationState.Closed, channel.State);
+                TestComplete();
+            });
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void ClosingAnOpenService_Expected_ServiceClosedGracefully()
+        {
+            var channelFactory = new AsyncChannelFactory<ITestService>();
+            var channel = channelFactory.CreateChannel();
+            Assert.AreEqual(CommunicationState.Created, channel.State);
+            channel.Open(() =>
+            {
+                Assert.AreEqual(CommunicationState.Opened, channel.State);
+                
+                channel.Close(
+                    ()=>
+                    {
+                        Assert.AreEqual(CommunicationState.Closed, channel.State);
+                        TestComplete();
+                    });
+            });
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void OpenServiceWithSatus_Expected_StatusPassed()
+        {
+            var channelFactory = new AsyncChannelFactory<ITestService>();
+            var channel = channelFactory.CreateChannel();
+            Assert.AreEqual(CommunicationState.Created, channel.State);
+
+            channel.Open(
+                "test status object",
+                (status) =>
+                {
+                    Assert.AreEqual("test status object", status);
+                    TestComplete();
+                });
+        }
+       
     }
 }
