@@ -11,36 +11,7 @@
     /// </summary>
     /// <typeparam name="TSync">the sync type to use as reference</typeparam>
     public partial class AsyncChannelFactory<TSync> where TSync : class
-    {
-
-        /// <summary>
-        /// Credential UserName
-        /// </summary>
-        public string UserName {
-            get
-            {
-                return Credentials.UserName.UserName;
-            }
-            set
-            {
-                Credentials.UserName.UserName = value;
-            }
-        }
-
-        /// <summary>
-        /// Credential Password
-        /// </summary>
-        public string Password
-        {
-            get
-            {
-                return Credentials.UserName.Password;
-            }
-            set
-            {
-                Credentials.UserName.Password = value;
-            }
-        }
+    {      
 
         /// <summary>
         /// Credentials

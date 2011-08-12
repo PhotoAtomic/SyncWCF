@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComplexDataType.cs" />
+    <Compile Include="INonExistingTestService.cs" />
     <Compile Include="ITestServiceOut.cs" />
     <Compile Include="ITestService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
