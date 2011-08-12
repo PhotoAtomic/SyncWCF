@@ -5,9 +5,9 @@
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
+    using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.Windows.Threading;
-using System.ServiceModel;
 
     /// <summary>
     /// represent an async channel that could be used to invoke the server

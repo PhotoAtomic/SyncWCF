@@ -1,10 +1,10 @@
 ﻿namespace PhotoAtomic.SyncWcf
 {
     using System;
+    using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
-    using System.Linq;
 
     /// <summary>
     /// creates asynch channel for the specified sync type
