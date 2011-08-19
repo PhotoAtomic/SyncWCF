@@ -42,9 +42,9 @@
             TypeBuilder typeBuilder =
                 GetModuleBuilder(asynchAssemblyName)
                 .DefineType(
-                    string.Format("{0}.Async.{1}",syncType.Namespace,syncType.Name),
-                    ((syncType.IsPublic)? TypeAttributes.Public : 0) |
-                    TypeAttributes.Abstract | 
+                    string.Format("{0}.Async.{1}", syncType.Namespace, syncType.Name),
+                    (syncType.IsPublic ? TypeAttributes.Public : 0) |
+                    TypeAttributes.Abstract |
                     TypeAttributes.Interface);
 
             foreach (var method in syncType.GetMethods())
@@ -52,7 +52,6 @@
                 AddBeginAsynchVersionForMethod(typeBuilder, method);
                 AddEndAsynchVersionForMethod(typeBuilder, method);
             }
-
 
             var serviceContractConstructor = typeof(ServiceContractAttribute).GetConstructor(new Type[0]);
             var attribuiteBuilder =
@@ -75,7 +74,6 @@
         /// <param name="method">information about the sync version of the method</param>
         private void AddEndAsynchVersionForMethod(TypeBuilder typeBuilder, MethodInfo method)
         {
-
             string endMethodName = string.Format("End{0}", method.Name);
 
             var parameters =
@@ -97,7 +95,6 @@
                     Attributes = ParameterAttributes.None,
                 });
 
-
             var methodBuilder =
                 typeBuilder
                 .DefineMethod(
@@ -105,7 +102,7 @@
                     method.Attributes,
                     method.CallingConvention,
                     method.ReturnType,
-                    parameters.Select(x=>x.Type).ToArray());
+                    parameters.Select(x => x.Type).ToArray());
 
             for (int i = 0; i < parameters.Count(); i++)
             {
@@ -121,12 +118,11 @@
         /// <param name="method">information about the sync version of the method</param>
         private void AddBeginAsynchVersionForMethod(TypeBuilder typeBuilder, MethodInfo method)
         {
-            string beginMethodName = string.Format("Begin{0}",method.Name);
+            string beginMethodName = string.Format("Begin{0}", method.Name);
 
-            var parametersTypeList = method.GetParameters().Select(x=>x.ParameterType).ToList();
-            var parametersNameList = method.GetParameters().Select(x=>x.Name).ToList();
-            var parametersAttributeList = method.GetParameters().Select(x=>x.Attributes).ToList();
-
+            var parametersTypeList = method.GetParameters().Select(x => x.ParameterType).ToList();
+            var parametersNameList = method.GetParameters().Select(x => x.Name).ToList();
+            var parametersAttributeList = method.GetParameters().Select(x => x.Attributes).ToList();
 
             parametersTypeList.Add(typeof(AsyncCallback));
             parametersAttributeList.Add(ParameterAttributes.None);
@@ -145,7 +141,8 @@
                     typeof(IAsyncResult),
                     parametersTypeList.ToArray());
 
-            for(int i = 0; i<parametersTypeList.Count(); i++){
+            for (int i = 0; i < parametersTypeList.Count(); i++)
+            {
                 methodBuilder.DefineParameter(i + 1, parametersAttributeList[i], parametersNameList[i]);
             }
 
@@ -159,7 +156,6 @@
                     new object[] { true });
 
             methodBuilder.SetCustomAttribute(attribuiteBuilder);
-
         }
 
         /// <summary>
@@ -170,8 +166,7 @@
         /// <remarks>in this version the model builder is not cached, it could be interesting to generate all the types in the same assembly by caching the model builder</remarks>
         private ModuleBuilder GetModuleBuilder(string requiredAssemblyName)
         {
-
-            if(moduleBuilderCache.ContainsKey(requiredAssemblyName))
+            if (moduleBuilderCache.ContainsKey(requiredAssemblyName))
             {
                 return moduleBuilderCache[requiredAssemblyName];
             }

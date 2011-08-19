@@ -1,17 +1,15 @@
 ﻿namespace PhotoAtomic.SyncWcf
 {
-
     using System;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
 
+    /// <summary>
+    /// Creates aynchronous channel
+    /// </summary>
+    /// <typeparam name="TSync">type of the synchronous service interface</typeparam>
     public partial class AsyncChannelFactory<TSync> where TSync : class
-    {
-        /// <summary>
-        /// the internal wcf channel factory
-        /// </summary>
-        private ChannelFactory ChannelFactory { get; set; }             
-      
+    {            
         /// <summary>
         /// Builds an async channel factory
         /// </summary>
@@ -42,10 +40,15 @@
         }
 
         /// <summary>
-        /// makes an instance of the required channel factory type
+        /// Gets or sets the internal wcf channel factory
+        /// </summary>
+        private ChannelFactory ChannelFactory { get; set; }       
+
+        /// <summary>
+        /// Makes an instance of the required channel factory type
         /// </summary>
         /// <param name="arguments">argument to pass to the internal channel factory constructor</param>
-        /// <returns></returns>
+        /// <returns>an instance of the channel factory of for the required generated asynchronous type</returns>
         private static ChannelFactory MakeChannelFactoryInstance(params object[] arguments)
         {
             Type asyncType = GenerateAsyncType<TSync>();

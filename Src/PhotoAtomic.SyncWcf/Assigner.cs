@@ -8,6 +8,7 @@
     /// <summary>
     /// Performs assignemnt back to the out and ref parameters
     /// </summary>
+    /// <typeparam name="T">Interface type on wich the assignment operation on out and ref parameters occurs</typeparam>
     public class Assigner<T> 
     {
         /// <summary>
@@ -23,6 +24,7 @@
         /// <summary>
         /// performs assigmnet on out and ref parameters
         /// </summary>
+        /// <typeparam name="TResult">the result type of the invoked method (automatically inferred)</typeparam>
         /// <param name="exp">expression to evaluate</param>
         /// <param name="values">the array of values to assign back</param>
         public void Assign<TResult>(Expression<Func<T, TResult>> exp, params object[] values)
@@ -42,7 +44,8 @@
 
             var assigmentToPerform =
                 method.Method.GetParameters()
-                .Zip(method.Arguments,
+                .Zip(
+                    method.Arguments,
                     (p, a) =>
                         new
                         {
@@ -76,6 +79,7 @@
                         value = Expression.Default(assignment.argument.Type);
                     }
                 }
+
                 statements.Add(Expression.Assign(assignment.argument, value));
             }
 

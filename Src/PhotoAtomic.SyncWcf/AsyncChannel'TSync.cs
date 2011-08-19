@@ -11,38 +11,28 @@
 
     /// <summary>
     /// represent an async channel that could be used to invoke the server
-    /// </summary>
-    /// <typeparam name="TSync">the sync type on wich the channel is based on</typeparam>
+    /// </summary>  
+    /// <typeparam name="TSync">type of synchronous channel</typeparam>
     public partial class AsyncChannel<TSync>
     {
         /// <summary>
         /// dictionary of the begin methods
         /// </summary>
         private Dictionary<string, Delegate> beginOperations = new Dictionary<string, Delegate>();
+
         /// <summary>
         /// dictionary of the end methods
         /// </summary>
         private Dictionary<string, Delegate> endOperations = new Dictionary<string, Delegate>();
+
         /// <summary>
         /// async inner channel
         /// </summary>
         private IChannel channel;
 
         /// <summary>
-        /// Gets the current state of the communication-oriented object.
-        /// </summary>
-        public CommunicationState State
-        {
-            get
-            {
-                return channel.State;
-            }
-        }
-
-        /// <summary>
         /// creates and initialize an AsyncChannel
         /// </summary>
-        /// 
         /// <param name="channel">the inner channel</param>
         protected internal AsyncChannel(IChannel channel)
         {
@@ -52,8 +42,8 @@
 
             foreach (var method in syncType.GetMethods())
             {
-                //Begin method
-                var beginMethod = proxyType.GetMethod(string.Format("Begin{0}",method.Name));
+                // Begin method
+                var beginMethod = proxyType.GetMethod(string.Format("Begin{0}", method.Name));
                 beginOperations.Add(
                     method.Name,
                     Delegate.CreateDelegate(
@@ -61,8 +51,7 @@
                         channel,
                         beginMethod));
 
-
-                //EndMethod
+                // EndMethod
                 var endMethod = proxyType.GetMethod(string.Format("End{0}", method.Name));
                 endOperations.Add(
                     method.Name,
@@ -74,19 +63,15 @@
         }
 
         /// <summary>
-        /// return a Func type that represent the passe dmethod
+        /// Gets the current state of the communication-oriented object.
         /// </summary>
-        /// <param name="method">a method descriptor</param>
-        /// <returns>returns a type that represent the method with the appropriate Func type delegate</returns>
-        private Type GetFuncDelegateTypeFor(MethodInfo method)
+        public CommunicationState State
         {
-            var parameters = method.GetParameters();
-            var parameterTypes = parameters.Select(x => x.ParameterType).ToList();
-
-            parameterTypes.Add(method.ReturnType);
-
-            return Expression.GetDelegateType(parameterTypes.ToArray());
-        }       
+            get
+            {
+                return channel.State;
+            }
+        }      
 
         /// <summary>
         /// Executes a synchronous operation defined on the Sync interface in an asynch fashon
@@ -113,7 +98,7 @@
                     parameters[method.Arguments.Count] = asyncResult;   
 
                     endOperations[method.Method.Name].DynamicInvoke(parameters);
-                    dispatcher.BeginInvoke(()=>
+                    dispatcher.BeginInvoke(() =>
                         {
                             new Assigner<TSync>().Assign(requestInvokation, parameters);
                             if (responseAction == null) return;
@@ -172,7 +157,7 @@
                 {
                     if (onException == null) return;
                     Exception exception = ex.InnerException ?? ex;
-                    dispatcher.BeginInvoke(() => onException(ex,asyncResult.AsyncState));
+                    dispatcher.BeginInvoke(() => onException(ex, asyncResult.AsyncState));
                 }
             };
 
@@ -181,20 +166,6 @@
 
             IAsyncResult invokationResult = BeginInvokation(method.Method.Name, argumentsValues);
 
-            return invokationResult;
-        }
-
-        /// <summary>
-        /// begin the invokation of the method
-        /// </summary>
-        /// <param name="method">the method to invoke</param>
-        /// <param name="argumentsValues">parameters to pass to the method</param>
-        /// <returns>returns the asynch result status</returns>
-        private IAsyncResult BeginInvokation(string methodName, List<object> argumentsValues)
-        {
-            IAsyncResult invokationResult = (IAsyncResult)
-            beginOperations[methodName]
-                .DynamicInvoke(argumentsValues.ToArray());
             return invokationResult;
         }
 
@@ -216,5 +187,34 @@
                 .ToList();
             return argumentsValues;
         }
+
+        /// <summary>
+        /// return a Func type that represent the passe dmethod
+        /// </summary>
+        /// <param name="method">a method descriptor</param>
+        /// <returns>returns a type that represent the method with the appropriate Func type delegate</returns>
+        private Type GetFuncDelegateTypeFor(MethodInfo method)
+        {
+            var parameters = method.GetParameters();
+            var parameterTypes = parameters.Select(x => x.ParameterType).ToList();
+
+            parameterTypes.Add(method.ReturnType);
+
+            return Expression.GetDelegateType(parameterTypes.ToArray());
+        } 
+
+        /// <summary>
+        /// begin the invokation of the method
+        /// </summary>
+        /// <param name="methodName">the method to invoke</param>
+        /// <param name="argumentsValues">parameters to pass to the method</param>
+        /// <returns>returns the asynch result status</returns>
+        private IAsyncResult BeginInvokation(string methodName, List<object> argumentsValues)
+        {
+            IAsyncResult invokationResult = (IAsyncResult)
+            beginOperations[methodName]
+                .DynamicInvoke(argumentsValues.ToArray());
+            return invokationResult;
+        }        
     }
 }

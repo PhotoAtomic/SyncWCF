@@ -83,7 +83,7 @@
         /// <param name="responseAction">the action to perform when the channel is successfully opened</param>
         /// <param name="onException">exception handler</param>
         /// <returns>IAsyncResult that describes the status of the asynchrnous operation</returns>
-        public IAsyncResult Open(object asyncState, Action<object> responseAction, Action<Exception,object> onException)
+        public IAsyncResult Open(object asyncState, Action<object> responseAction, Action<Exception, object> onException)
         {
             Dispatcher dispatcher = System.Windows.Deployment.Current.Dispatcher;
 
@@ -93,7 +93,7 @@
                 {
                     channel.EndOpen(asyncResult);
                     dispatcher.BeginInvoke(() =>
-                    {                        
+                    {
                         if (responseAction == null) return;
                         responseAction(asyncResult.AsyncState);
                     });
