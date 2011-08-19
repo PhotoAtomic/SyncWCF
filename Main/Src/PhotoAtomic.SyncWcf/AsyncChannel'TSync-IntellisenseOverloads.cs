@@ -5,7 +5,6 @@
 
     public partial class AsyncChannel<TSync>
     {
-
         /// <summary>
         /// Executes a synchronous operation defined on the Sync interface in an asynch fashon
         /// </summary>
@@ -34,7 +33,7 @@
         /// </summary>
         /// <typeparam name="TOut">the type of result expected from the invokation of the operaton</typeparam>
         /// <param name="requestInvokation">the request to perform on the channel expressed as Sync</param>
-        /// <param name="asyncState">an user defined object to transmit to the ascyn reply of the operation</param>
+        /// <param name="asyncStatus">an user defined object to transmit to the ascyn reply of the operation</param>
         /// <param name="responseAction">the action to perform when the reply arrives</param>
         /// <returns>an IAsyncResult for the asyncronous operation, it could be useful to check when the operation is completed</returns>
         public IAsyncResult ExecuteAsync<TOut>(Expression<Func<TSync, TOut>> requestInvokation, object asyncStatus, Action<TOut, object> responseAction)
@@ -46,7 +45,7 @@
         /// Executes a synchronous operation defined on the Sync interface in an asynch fashon
         /// </summary>        
         /// <param name="requestInvokation">the request to perform on the channel expressed as Sync</param>
-        /// /// <param name="asyncState">an user defined object to transmit to the ascyn reply of the operation</param>
+        /// /// <param name="asyncStatus">an user defined object to transmit to the ascyn reply of the operation</param>
         /// <param name="responseAction">the action to perform when the reply arrives</param>
         /// <returns>an IAsyncResult for the asyncronous operation, it could be useful to check when the operation is completed</returns>
         public IAsyncResult ExecuteAsync(Expression<Action<TSync>> requestInvokation, object asyncStatus, Action<object> responseAction)

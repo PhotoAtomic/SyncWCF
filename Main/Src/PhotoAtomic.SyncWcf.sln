@@ -15,6 +15,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.Communication.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoAtomic.SyncWcf", "PhotoAtomic.SyncWcf\PhotoAtomic.SyncWcf.csproj", "{DCCA8373-40E8-4145-B7F2-E6325607AC4B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{DA3E86EB-1CD5-4407-BCC2-9509049D67FB}"
+	ProjectSection(SolutionItems) = preProject
+		..\Doc\NamespaceDependencies.dgml = ..\Doc\NamespaceDependencies.dgml
+		..\Doc\NamespacesDocs.xml = ..\Doc\NamespacesDocs.xml
+		..\Doc\SyncWcf.shfbproj = ..\Doc\SyncWcf.shfbproj
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 6

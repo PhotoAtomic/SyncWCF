@@ -6,15 +6,10 @@
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
 
-    /// <summary>
-    /// creates asynch channel for the specified sync type
-    /// </summary>
-    /// <typeparam name="TSync">the sync type to use as reference</typeparam>
     public partial class AsyncChannelFactory<TSync> where TSync : class
     {      
-
         /// <summary>
-        /// Credentials
+        /// Gets the credentials used to initialise the produced channel
         /// </summary>
         public ClientCredentials Credentials
         {
@@ -24,7 +19,6 @@
             }
         }
         
-
         /// <summary>
         /// generated an async channel for the specified sync type
         /// </summary>        
@@ -76,17 +70,16 @@
         /// <summary>
         /// Creates a channel
         /// </summary>
-        /// 
+        /// <typeparam name="T">the synchronous interface type of the service</typeparam>        
         /// <param name="channelFactory">the channel factory instace for the channel creation</param>
-        /// <returns></returns>
-        private static AsyncChannel<T> CreateAsyncChannel<T>(ChannelFactory channelFactory,params object[] arguments)
+        /// <param name="arguments">arguments to pass to the CreateChannel method of the channel factory</param>
+        /// <returns>an instance of the  asyncronous channel</returns>
+        private static AsyncChannel<T> CreateAsyncChannel<T>(ChannelFactory channelFactory, params object[] arguments)
         {
             Type factoryType = channelFactory.GetType();
-            var createChannelMethod = factoryType.GetMethod("CreateChannel", arguments.Select(x=>x.GetType()).ToArray());
+            var createChannelMethod = factoryType.GetMethod("CreateChannel", arguments.Select(x => x.GetType()).ToArray());
             IChannel channel = (IChannel)createChannelMethod.Invoke(channelFactory, arguments);
             return new AsyncChannel<T>(channel);
         }
-
-
     }
 }
