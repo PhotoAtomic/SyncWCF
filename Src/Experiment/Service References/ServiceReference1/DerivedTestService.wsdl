@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DerivedTestService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="CustomBinding_IDerivedTestService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:6155/DerivedTestService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:6155/DerivedTestService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IDerivedTestService_Operation_InputMessage">
+    <wsdl:part name="parameters" element="tns:Operation" />
+  </wsdl:message>
+  <wsdl:message name="IDerivedTestService_Operation_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OperationResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDerivedTestService_FaultingOperation_InputMessage">
+    <wsdl:part name="parameters" element="tns:FaultingOperation" />
+  </wsdl:message>
+  <wsdl:message name="IDerivedTestService_FaultingOperation_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FaultingOperationResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDerivedTestService_VoidOperation_InputMessage">
+    <wsdl:part name="parameters" element="tns:VoidOperation" />
+  </wsdl:message>
+  <wsdl:message name="IDerivedTestService_VoidOperation_OutputMessage">
+    <wsdl:part name="parameters" element="tns:VoidOperationResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDerivedTestService_DerivedOperation_InputMessage">
+    <wsdl:part name="parameters" element="tns:DerivedOperation" />
+  </wsdl:message>
+  <wsdl:message name="IDerivedTestService_DerivedOperation_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DerivedOperationResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IDerivedTestService">
+    <wsdl:operation name="Operation">
+      <wsdl:input wsaw:Action="http://tempuri.org/ITestService/Operation" message="tns:IDerivedTestService_Operation_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ITestService/OperationResponse" message="tns:IDerivedTestService_Operation_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FaultingOperation">
+      <wsdl:input wsaw:Action="http://tempuri.org/ITestService/FaultingOperation" message="tns:IDerivedTestService_FaultingOperation_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ITestService/FaultingOperationResponse" message="tns:IDerivedTestService_FaultingOperation_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="VoidOperation">
+      <wsdl:input wsaw:Action="http://tempuri.org/ITestService/VoidOperation" message="tns:IDerivedTestService_VoidOperation_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ITestService/VoidOperationResponse" message="tns:IDerivedTestService_VoidOperation_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DerivedOperation">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDerivedTestService/DerivedOperation" message="tns:IDerivedTestService_DerivedOperation_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDerivedTestService/DerivedOperationResponse" message="tns:IDerivedTestService_DerivedOperation_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CustomBinding_IDerivedTestService" type="tns:IDerivedTestService">
+    <wsp:PolicyReference URI="#CustomBinding_IDerivedTestService_policy" />
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Operation">
+      <soap12:operation soapAction="http://tempuri.org/ITestService/Operation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FaultingOperation">
+      <soap12:operation soapAction="http://tempuri.org/ITestService/FaultingOperation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="VoidOperation">
+      <soap12:operation soapAction="http://tempuri.org/ITestService/VoidOperation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DerivedOperation">
+      <soap12:operation soapAction="http://tempuri.org/IDerivedTestService/DerivedOperation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DerivedTestService">
+    <wsdl:port name="CustomBinding_IDerivedTestService" binding="tns:CustomBinding_IDerivedTestService">
+      <soap12:address location="http://localhost:6155/DerivedTestService.svc" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>http://localhost:6155/DerivedTestService.svc</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -21,6 +21,9 @@
           <endpoint address="http://localhost:6155/NonExistingTestService.svc" binding="customBinding"
             bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.Async.INonExistingTestService"
             name="CustomBinding_INonExistingTestService" />
+          <endpoint address="http://localhost:6155/DerivedTestService.svc" binding="customBinding"
+            bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.Async.IDerivedTestService"
+            name="CustomBinding_IDerivedTestService" />
         </client>
     </system.serviceModel>
 </configuration>

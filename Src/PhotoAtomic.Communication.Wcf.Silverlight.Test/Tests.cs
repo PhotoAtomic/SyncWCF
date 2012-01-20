@@ -52,7 +52,7 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
                         number = result + 1;
                         Assert.AreEqual(number, 7);
                         TestComplete();
-                    });            
+                    });
         }
 
         [TestMethod]
@@ -126,7 +126,7 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
                     {
                         Assert.AreEqual("status message", status);
                         TestComplete();
-                    });            
+                    });
         }
 
         [TestMethod]
@@ -169,9 +169,9 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
             var channel = channelFactory.CreateChannel();
             ComplexDataType data = new ComplexDataType
                 {
-                     Description = "in",
-                     Name = "in name",
-                     Id = 0,                
+                    Description = "in",
+                    Name = "in name",
+                    Id = 0,
                 };
 
             var result =
@@ -187,7 +187,7 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
                         Assert.AreEqual("out name", res.Name);
                         Assert.AreEqual(2, res.Id);
                         TestComplete();
-                    });                    
+                    });
         }
 
         [TestMethod]
@@ -196,7 +196,7 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
         {
             var channelFactory = new AsyncChannelFactory<duplicate.ITestServiceOut>();
             var channel = channelFactory.CreateChannel();
-            int a = 1;            
+            int a = 1;
             var res =
                 channel.ExecuteAsync(
                     ws => ws.Method(ref a),
@@ -204,8 +204,8 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
                     {
                         Assert.AreEqual(29, a);
                         TestComplete();
-                    });            
-            
+                    });
+
         }
 
         [TestMethod]
@@ -236,7 +236,7 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
             {
                 Assert.AreEqual(CommunicationState.Opened, channel.State);
                 TestComplete();
-            });            
+            });
         }
 
         [TestMethod]
@@ -265,9 +265,9 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
             channel.Open(() =>
             {
                 Assert.AreEqual(CommunicationState.Opened, channel.State);
-                
+
                 channel.Close(
-                    ()=>
+                    () =>
                     {
                         Assert.AreEqual(CommunicationState.Closed, channel.State);
                         TestComplete();
@@ -291,6 +291,23 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
                     TestComplete();
                 });
         }
-       
+
+
+        [TestMethod]
+        [Asynchronous]
+        public void InvokeAnOperationDefinedInAnInheritedServiceInterface_Expected_OperationPerformed()
+        {
+            var channelFactory = new AsyncChannelFactory<IDerivedTestService>();
+            var channel = channelFactory.CreateChannel();
+
+            channel.ExecuteAsync(
+                ws => ws.VoidOperation(1),
+                () => { 
+                    TestComplete(); 
+                },
+                exception => { Assert.Fail(); });
+
+        }
+
     }
 }

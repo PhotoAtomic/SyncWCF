@@ -40,7 +40,7 @@
             var proxyType = channel.GetType();
             this.channel = channel;
 
-            foreach (var method in syncType.GetMethods())
+            foreach (var method in syncType.GetAllInterfaceMethods())
             {
                 // Begin method
                 var beginMethod = proxyType.GetMethod(string.Format("Begin{0}", method.Name));

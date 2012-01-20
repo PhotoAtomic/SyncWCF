@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ClientBin\PhotoAtomic.Reflection.Silverlight.Test.xap" />
+    <Content Include="DerivedTestService.svc" />
     <Content Include="PhotoAtomic.Communication.Wcf.Silverlight.TestTestPage.aspx" />
     <Content Include="PhotoAtomic.Communication.Wcf.Silverlight.TestTestPage.html" />
     <Content Include="Silverlight.js" />
@@ -74,6 +75,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DerivedTestService.svc.cs">
+      <DependentUpon>DerivedTestService.svc</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SilverlightFaultBehavior.cs" />
     <Compile Include="TestService.svc.cs">
