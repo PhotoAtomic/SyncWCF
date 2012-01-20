@@ -47,9 +47,9 @@
                     TypeAttributes.Abstract |
                     TypeAttributes.Interface);
 
-            foreach (var method in syncType.GetMethods())
+            foreach (var method in syncType.GetAllInterfaceMethods())
             {
-                AddBeginAsynchVersionForMethod(typeBuilder, method);
+                AddBeginAsynchVersionForMethod(typeBuilder, method, @"http://tempuri.org");
                 AddEndAsynchVersionForMethod(typeBuilder, method);
             }
 
@@ -116,7 +116,7 @@
         /// </summary>
         /// <param name="typeBuilder">the tipebuilder where the type is being building</param>
         /// <param name="method">information about the sync version of the method</param>
-        private void AddBeginAsynchVersionForMethod(TypeBuilder typeBuilder, MethodInfo method)
+        private void AddBeginAsynchVersionForMethod(TypeBuilder typeBuilder, MethodInfo method, string nameSpace)
         {
             string beginMethodName = string.Format("Begin{0}", method.Name);
 
@@ -148,12 +148,21 @@
 
             var operationContractConstructor = typeof(OperationContractAttribute).GetConstructor(new Type[0]);
             var asynchPatternProperty = typeof(OperationContractAttribute).GetProperty("AsyncPattern");
+
+            var actionProperty = typeof(OperationContractAttribute).GetProperty("Action");
+            var actionValue = string.Format("{0}/{1}/{2}", nameSpace, method.DeclaringType.Name, method.Name);
+
+            var replyActionProperty = typeof(OperationContractAttribute).GetProperty("ReplyAction");
+            var replyActionValue = string.Format("{0}/{1}/{2}Response", nameSpace, method.DeclaringType.Name, method.Name);
+
             var attribuiteBuilder = 
                 new CustomAttributeBuilder(
                     operationContractConstructor, 
-                    new object[0], 
-                    new[] { asynchPatternProperty }, 
-                    new object[] { true });
+                    new object[0],
+                    new[] { asynchPatternProperty, actionProperty, replyActionProperty },
+                    new object[] { true, actionValue, replyActionValue });
+
+            
 
             methodBuilder.SetCustomAttribute(attribuiteBuilder);
         }
