@@ -14,12 +14,14 @@ using PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test;
 using duplicate = PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test;
 using System.Threading;
 using PhotoAtomic.SyncWcf;
+using PhotoAtomic.SyncWcf.TypeConverters;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 
 namespace PhotoAtomic.Reflection.Silverlight.Test
-{
+{  
     [TestClass]
-    public class Tests : SilverlightTest
+    public partial class Tests : SilverlightTest
     {
         [TestMethod]
         public void PassSyncInterfaceType_Expected_AsynchInterfaceTypeReturned()
@@ -307,6 +309,49 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
                 },
                 exception => { Assert.Fail(); });
 
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void UseWithOperationContextScope_Expected_OperationPerformed()
+        {
+            var channelFactory = new AsyncChannelFactory<IDerivedTestService>();
+            var channel = channelFactory.CreateChannel();
+
+            var userContextHeaderName = "UserContext";
+            var userContextHeaderNamespace = "http://my.context.namespace/";
+            var userContextHeaderValue = "My user context";
+
+            var testPart = new MultipartComplete(2, TestComplete);
+
+            using (var scope = new OperationContextScope(channel.ToContextChannel()))
+            {
+
+                OperationContext.Current.OutgoingMessageHeaders.Add(
+                    MessageHeader.CreateHeader(
+                        userContextHeaderName,
+                        userContextHeaderNamespace,
+                        userContextHeaderValue));
+
+                channel.ExecuteAsync(
+                    ws => ws.ReadHeaderOperation(),
+                    result =>
+                    {
+                        Assert.AreEqual(userContextHeaderValue, result);
+                        testPart.Completed();
+                    },
+                    exception => { Assert.Fail(); });
+            }
+
+            channel.ExecuteAsync(
+                    ws => ws.ReadHeaderOperation(),
+                    result =>
+                    {
+                        Assert.IsNull(result);
+                        testPart.Completed();
+                    },
+                    exception => { Assert.Fail(); });
+            
         }
 
     }

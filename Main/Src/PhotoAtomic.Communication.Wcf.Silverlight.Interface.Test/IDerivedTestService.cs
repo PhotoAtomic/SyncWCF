@@ -11,5 +11,8 @@ namespace PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test
     {
         [OperationContract]
         void DerivedOperation();
+
+        [OperationContract]
+        string ReadHeaderOperation();
     }
 }
