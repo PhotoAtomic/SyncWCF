@@ -33,5 +33,26 @@ namespace PhotoAtomic.Reflection.Silverlight.Test.Web
         public void VoidOperation(int value)
         {            
         }
+
+
+        public string ReadHeaderOperation()
+        {
+            var userContextHeaderName = "UserContext";
+            var userContextHeaderNamespace = "http://my.context.namespace/";
+
+            var header = OperationContext.Current.IncomingMessageHeaders
+                .Where(h => h.Name == userContextHeaderName)
+                .Where(h => h.Namespace == userContextHeaderNamespace)
+                .SingleOrDefault();
+
+
+            if (header != null)
+            {
+                return OperationContext.Current.IncomingMessageHeaders.GetHeader<string>(header.Name, header.Namespace);
+            }
+            
+
+            return null;
+        }
     }
 }

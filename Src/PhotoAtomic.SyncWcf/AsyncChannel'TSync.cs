@@ -28,7 +28,7 @@
         /// <summary>
         /// async inner channel
         /// </summary>
-        private IChannel channel;
+        internal IChannel channel;
 
         /// <summary>
         /// creates and initialize an AsyncChannel
@@ -215,6 +215,6 @@
             beginOperations[methodName]
                 .DynamicInvoke(argumentsValues.ToArray());
             return invokationResult;
-        }        
+        }       
     }
 }
