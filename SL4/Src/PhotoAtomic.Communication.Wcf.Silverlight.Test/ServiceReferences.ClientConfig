@@ -1,0 +1,29 @@
+﻿<configuration>
+    <system.serviceModel>
+        <bindings>
+            <customBinding>
+                <binding name="CustomBinding_ITestService">
+                    <binaryMessageEncoding />
+                    <httpTransport maxReceivedMessageSize="2147483647" maxBufferSize="2147483647" />
+                </binding>
+            </customBinding>
+        </bindings>
+        <client>
+          <endpoint address="http://localhost:6155/TestService.svc" binding="customBinding"
+            bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.Async.ITestService"
+            name="CustomBinding_ITestService" />
+          <endpoint address="http://localhost:6155/TestServiceOut.svc" binding="customBinding"
+            bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.Async.ITestServiceOut"
+            name="CustomBinding_ITestServiceOut" />
+          <endpoint address="http://localhost:6155/TestServiceOut2.svc" binding="customBinding"
+            bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface2.Test.Async.ITestServiceOut"
+            name="CustomBinding_ITestServiceOut2" />
+          <endpoint address="http://localhost:6155/NonExistingTestService.svc" binding="customBinding"
+            bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.Async.INonExistingTestService"
+            name="CustomBinding_INonExistingTestService" />
+          <endpoint address="http://localhost:6155/DerivedTestService.svc" binding="customBinding"
+            bindingConfiguration="CustomBinding_ITestService" contract="PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.Async.IDerivedTestService"
+            name="CustomBinding_IDerivedTestService" />
+        </client>
+    </system.serviceModel>
+</configuration>
