@@ -6,17 +6,19 @@
     using System.Reflection;
     using System.Reflection.Emit;
     using System.ServiceModel;
-
+    using System.Text.RegularExpressions;
     /// <summary>
     /// Can Generate Types
     /// It also haveinternal cache to not generate multiple times the same type
     /// </summary>
     public class TypeGenerator
     {
+        private const string DefaultNamespace = @"http://tempuri.org";
+
         /// <summary>
         /// internal cache for already generated types
         /// </summary>
-        private static Dictionary<Type, Type> asyncTypeCache = new Dictionary<Type, Type>();      
+        private static Dictionary<Type, Type> asyncTypeCache = new Dictionary<Type, Type>();
 
         /// <summary>
         /// provides a cache for the modules
@@ -49,7 +51,7 @@
 
             foreach (var method in syncType.GetAllInterfaceMethods())
             {
-                AddBeginAsynchVersionForMethod(typeBuilder, method, @"http://tempuri.org");
+                AddBeginAsynchVersionForMethod(typeBuilder, method, DefaultNamespace);
                 AddEndAsynchVersionForMethod(typeBuilder, method);
             }
 
@@ -59,8 +61,7 @@
                     serviceContractConstructor,
                     new object[0]);
 
-            typeBuilder.SetCustomAttribute(attribuiteBuilder);
-
+            typeBuilder.SetCustomAttribute(attribuiteBuilder);            
             Type asyncType = typeBuilder.CreateType();
 
             asyncTypeCache.Add(syncType, asyncType);
@@ -107,7 +108,7 @@
             for (int i = 0; i < parameters.Count(); i++)
             {
                 var parameter = parameters[i];
-                methodBuilder.DefineParameter(i + 1, parameter.Attributes, parameter.Name);             
+                methodBuilder.DefineParameter(i + 1, parameter.Attributes, parameter.Name);
             }
         }
 
@@ -116,6 +117,7 @@
         /// </summary>
         /// <param name="typeBuilder">the tipebuilder where the type is being building</param>
         /// <param name="method">information about the sync version of the method</param>
+        /// <param name="nameSpace">information about the namespace of the service</param>
         private void AddBeginAsynchVersionForMethod(TypeBuilder typeBuilder, MethodInfo method, string nameSpace)
         {
             string beginMethodName = string.Format("Begin{0}", method.Name);
@@ -132,7 +134,7 @@
             parametersAttributeList.Add(ParameterAttributes.None);
             parametersNameList.Add("statusObject");
 
-            var methodBuilder = 
+            var methodBuilder =
                 typeBuilder
                 .DefineMethod(
                     beginMethodName,
@@ -150,19 +152,39 @@
             var asynchPatternProperty = typeof(OperationContractAttribute).GetProperty("AsyncPattern");
 
             var actionProperty = typeof(OperationContractAttribute).GetProperty("Action");
-            var actionValue = string.Format("{0}/{1}/{2}", nameSpace, method.DeclaringType.Name, method.Name);
-
+            string serviceType;
+            if (!method.DeclaringType.IsGenericType)
+            {
+                serviceType = method.DeclaringType.Name;
+            }
+            else
+            {
+                //Here we format the Action Attribute of the service call.  If it is a generic type, we need to format it 
+                //like "[GenericType]Of_[ConcreteClass].  For example:"IServiceOf_Product".  
+                Type declaringType = method.DeclaringType;
+                
+                System.Text.StringBuilder serviceWithGenericParameters = new System.Text.StringBuilder(declaringType.GetGenericTypeDefinition().Name);
+                serviceWithGenericParameters.Length = declaringType.GetGenericTypeDefinition().Name.IndexOf('`');
+                serviceWithGenericParameters.Append("Of");
+                foreach (Type genericParameter in declaringType.GetGenericArguments())
+                {
+                    serviceWithGenericParameters.Append("_");
+                    serviceWithGenericParameters.Append(genericParameter.Name);
+                }
+                serviceType = serviceWithGenericParameters.ToString();
+            }
+            var actionValue = string.Format("{0}/{1}/{2}", nameSpace, serviceType, method.Name);            
             var replyActionProperty = typeof(OperationContractAttribute).GetProperty("ReplyAction");
-            var replyActionValue = string.Format("{0}/{1}/{2}Response", nameSpace, method.DeclaringType.Name, method.Name);
-
-            var attribuiteBuilder = 
+            var replyActionValue = string.Format("{0}/{1}/{2}Response", nameSpace, serviceType, method.Name);
+            
+            var attribuiteBuilder =
                 new CustomAttributeBuilder(
-                    operationContractConstructor, 
+                    operationContractConstructor,
                     new object[0],
                     new[] { asynchPatternProperty, actionProperty, replyActionProperty },
                     new object[] { true, actionValue, replyActionValue });
 
-            
+
 
             methodBuilder.SetCustomAttribute(attribuiteBuilder);
         }
@@ -185,7 +207,7 @@
                 AppDomain.CurrentDomain.DefineDynamicAssembly(
                     assemblyName,
                     AssemblyBuilderAccess.Run);
-            
+
             ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name);
 
             moduleBuilderCache[requiredAssemblyName] = moduleBuilder;

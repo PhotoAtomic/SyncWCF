@@ -17,8 +17,8 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)
-        {
-            RootVisual = UnitTestSystem.CreateTestPage();
+        {            
+            RootVisual = UnitTestSystem.CreateTestPage();            
         }
 
         private void Application_Exit(object sender, EventArgs e)

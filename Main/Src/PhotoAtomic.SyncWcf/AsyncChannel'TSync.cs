@@ -8,7 +8,8 @@
     using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.Windows.Threading;
-
+    using System.Threading.Tasks;
+    using System.Threading;
     /// <summary>
     /// represent an async channel that could be used to invoke the server
     /// </summary>  
@@ -51,14 +52,14 @@
                         channel,
                         beginMethod));
 
-                // EndMethod
+                // End Method
                 var endMethod = proxyType.GetMethod(string.Format("End{0}", method.Name));
                 endOperations.Add(
                     method.Name,
                     Delegate.CreateDelegate(
                         GetFuncDelegateTypeFor(endMethod),
                         channel,
-                        endMethod));                                
+                        endMethod));
             }
         }
 
@@ -71,7 +72,7 @@
             {
                 return channel.State;
             }
-        }      
+        }
 
         /// <summary>
         /// Executes a synchronous operation defined on the Sync interface in an asynch fashon
@@ -95,7 +96,7 @@
                 try
                 {
                     var parameters = Enumerable.Repeat<object>(null, method.Arguments.Count + 1).ToArray();
-                    parameters[method.Arguments.Count] = asyncResult;   
+                    parameters[method.Arguments.Count] = asyncResult;
 
                     endOperations[method.Method.Name].DynamicInvoke(parameters);
                     dispatcher.BeginInvoke(() =>
@@ -144,7 +145,7 @@
                 try
                 {
                     var parameters = Enumerable.Repeat<object>(null, method.Arguments.Count + 1).ToArray();
-                    parameters[method.Arguments.Count] = asyncResult;   
+                    parameters[method.Arguments.Count] = asyncResult;
                     TOut result = (TOut)endOperations[method.Method.Name].DynamicInvoke(parameters);
                     dispatcher.BeginInvoke(() =>
                         {
@@ -168,6 +169,111 @@
 
             return invokationResult;
         }
+
+
+
+        /// <summary>
+        /// Executes a synchronous operation defined on the Sync interface in a task fashon
+        /// </summary>        
+        /// <param name="requestInvokation">the method being called</param>
+        /// <param name="asyncState">an async state to pass to the task</param>
+        /// <param name="options">task option creations</param>
+        /// <returns></returns>
+        public Task ExecuteTask(Expression<Action<TSync>> requestInvokation, object asyncState, TaskCreationOptions options)
+        {
+            var lambda = requestInvokation as LambdaExpression;
+            var method = lambda.Body as MethodCallExpression;
+
+            var argumentsValues = ExtractArgumentValuesList(method);
+
+            Dispatcher dispatcher = System.Windows.Deployment.Current.Dispatcher;
+
+            Action<IAsyncResult> callback = asyncResult =>
+            {
+                var parameters = Enumerable.Repeat<object>(null, method.Arguments.Count + 1).ToArray();
+                parameters[method.Arguments.Count] = asyncResult;
+                try
+                {
+                    endOperations[method.Method.Name].DynamicInvoke(parameters);
+                    dispatcher.BeginInvoke(() =>
+                    {
+                        new Assigner<TSync>().Assign(requestInvokation, parameters);
+                    });                    
+                }
+                catch (Exception ex)
+                {
+                    Exception exception = ex.InnerException ?? ex;
+                    throw exception;
+                }
+            };
+
+            argumentsValues.Add(null);
+            argumentsValues.Add(asyncState);
+
+            Func<AsyncCallback, object, IAsyncResult> invoker = (endCallback, state) =>
+            {
+                var result = BeginInvokation(method.Method.Name, argumentsValues);
+                ThreadPool.RegisterWaitForSingleObject(result.AsyncWaitHandle, (s, timeout) => endCallback(result), state, -1, true);
+
+                return result;
+            };
+
+            return Task.Factory.FromAsync(invoker, callback, asyncState, options);
+        }
+
+
+        /// <summary>
+        /// Executes a synchronous operation defined on the Sync interface in a task fashon
+        /// </summary>
+        /// <typeparam name="TOut">the type of the returned value</typeparam>
+        /// <param name="requestInvokation">the method being called</param>
+        /// <param name="asyncState">an async state to pass to the task</param>
+        /// <param name="options">task option creations</param>
+        /// <returns></returns>
+        public Task<TOut> ExecuteTask<TOut>(Expression<Func<TSync, TOut>> requestInvokation, object asyncState, TaskCreationOptions options)
+        {
+
+            var lambda = requestInvokation as LambdaExpression;
+            var method = lambda.Body as MethodCallExpression;
+
+            var argumentsValues = ExtractArgumentValuesList(method);
+
+            Dispatcher dispatcher = System.Windows.Deployment.Current.Dispatcher;
+
+            Func<IAsyncResult,TOut> callback = asyncResult =>
+            {                
+                var parameters = Enumerable.Repeat<object>(null, method.Arguments.Count + 1).ToArray();
+                parameters[method.Arguments.Count] = asyncResult;
+                try
+                {
+                    TOut result = (TOut)endOperations[method.Method.Name].DynamicInvoke(parameters);
+                    dispatcher.BeginInvoke(() =>
+                    {
+                        new Assigner<TSync>().Assign(requestInvokation, parameters);
+                    });
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    Exception exception = ex.InnerException ?? ex;
+                    throw exception;                    
+                }
+            };
+
+            argumentsValues.Add(null);
+            argumentsValues.Add(asyncState);
+
+            Func<AsyncCallback, object, IAsyncResult> invoker = (endCallback, state) =>
+            {
+                var result =  BeginInvokation(method.Method.Name, argumentsValues);
+                ThreadPool.RegisterWaitForSingleObject(result.AsyncWaitHandle, (s,timeout)=> endCallback(result),state,-1,true);
+
+                return result;
+            };
+            
+            return  Task.Factory.FromAsync<TOut>(invoker, callback, asyncState, options); 
+        }
+
 
         /// <summary>
         /// generates a list of argument values decoding the expression
@@ -201,7 +307,7 @@
             parameterTypes.Add(method.ReturnType);
 
             return Expression.GetDelegateType(parameterTypes.ToArray());
-        } 
+        }
 
         /// <summary>
         /// begin the invokation of the method
@@ -215,6 +321,6 @@
             beginOperations[methodName]
                 .DynamicInvoke(argumentsValues.ToArray());
             return invokationResult;
-        }       
+        }
     }
 }

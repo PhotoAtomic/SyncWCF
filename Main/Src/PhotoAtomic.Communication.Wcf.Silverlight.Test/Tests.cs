@@ -17,9 +17,10 @@ using PhotoAtomic.SyncWcf;
 using PhotoAtomic.SyncWcf.TypeConverters;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using PhotoAtomic.Communication.Wcf.Silverlight.Interface3.Test;
 
 namespace PhotoAtomic.Reflection.Silverlight.Test
-{  
+{
     [TestClass]
     public partial class Tests : SilverlightTest
     {
@@ -170,11 +171,11 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
             var channelFactory = new AsyncChannelFactory<ITestServiceOut>();
             var channel = channelFactory.CreateChannel();
             ComplexDataType data = new ComplexDataType
-                {
-                    Description = "in",
-                    Name = "in name",
-                    Id = 0,
-                };
+            {
+                Description = "in",
+                Name = "in name",
+                Id = 0,
+            };
 
             var result =
                 channel.ExecuteAsync(
@@ -304,8 +305,9 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
 
             channel.ExecuteAsync(
                 ws => ws.VoidOperation(1),
-                () => { 
-                    TestComplete(); 
+                () =>
+                {
+                    TestComplete();
                 },
                 exception => { Assert.Fail(); });
 
@@ -351,8 +353,32 @@ namespace PhotoAtomic.Reflection.Silverlight.Test
                         testPart.Completed();
                     },
                     exception => { Assert.Fail(); });
-            
+
         }
+
+
+        [TestMethod]
+        [Asynchronous]
+        public void ServiceWithGenericInterface_Expected_GeneratedUriMatchWCFFormatting()
+        {
+            var generator = new TypeGenerator();
+            var asynchType = generator.GenerateAsyncInterfaceFor<ISyncInterface<int>>();
+            Assert.IsNotNull(asynchType);
+            Assert.IsTrue(asynchType.IsInterface);
+
+            var methods = asynchType.GetMethods();
+
+            Assert.AreEqual(methods[0].Name, "BeginAMethod");
+            var operationContract = (methods[0].GetCustomAttributes(true)[0] as OperationContractAttribute);
+            Assert.AreEqual(operationContract.Action, @"http://tempuri.org/ISyncInterfaceOf_Int32/AMethod");
+            Assert.AreEqual(operationContract.ReplyAction, @"http://tempuri.org/ISyncInterfaceOf_Int32/AMethodResponse");
+            Assert.AreEqual(methods[1].Name, "EndAMethod");
+            Assert.AreEqual(2, methods.Length);
+            TestComplete();
+        }
+
+
+
 
     }
 }
