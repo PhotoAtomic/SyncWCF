@@ -1,0 +1,135 @@
+<div class="wikidoc">
+<p><a title="PhotoAtomic Research Lab." href="http://www.photoatomiclab.net" target="_blank"><img title="PhotoAtomic Research Lab." src="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=266882" alt="PhotoAtomic Logo color" width="204" height="204" align="right" border="0" style="margin:20px; padding-left:0px; padding-right:0px; display:inline; float:right; padding-top:0px; border-width:0px"></a></p>
+<h1>SyncWcf overview</h1>
+<p>SyncWcf allows you to consume async WCF service easilly. it allows you to share the service interface in a portable library and use the synchronous style interface to perform async operations. It doesn't requires any magical code generation.
+<br>
+<br>
+SyncWcf is a library that allows Silverlight to call WCF service with ease. <br>
+Usually you have two option:</p>
+<ol>
+<li>rely on the generated code in visual studio for service client (&quot;add service reference and so on...&quot;)
+</li><li>handwrite an Async version of the Sync interface you have used at the server side.
+</li></ol>
+<p><br>
+both of this have downsides:</p>
+<ul>
+<li>generated code is usually a mess to maintain, and you (or your development team) have to remember to update the service reference each time the service interface change
+</li><li>on the other side if you handwrite the async version of the service interface you could potentially spend lot of time and again you have to remember to update it, plus you have to manage the invokation of the async pattern
+</li></ul>
+<p><br>
+there are scenarios where these points are a big problems, for examples in teams where there are developers with few experience with .NET, or where the development time is very critical or, again, your client side application must be very tight coupled to the
+ server side, and you have to be absolutely sure that they share the exact same interface (even with additional attributes you have applied on it!)
+<br>
+<br>
+<em>this where SyncWcf came into place</em> <br>
+by using the new Portable assebly you could:</p>
+<ul>
+<li>share exactly the same interface and data types between server and client. </li><li>invoke the service using the synchrounous interface (no more Begin&lt;Operation&gt; End&lt;Operation&gt; but just &lt;Operation&gt;), and the asynchronicity is maintained!
+</li><li>by using lambdas your code could look like as it is synchrnous but in fact it executes asyncrhonously.
+</li></ul>
+<h2>Code samples</h2>
+<p>Below how the code changes if you use SyncWcf <br>
+<br>
+assume we have the following service interface on the server side</p>
+<div style="background-color:white; color:black">
+<pre>    [ServiceContract]
+    <span style="color:blue">public</span> <span style="color:blue">interface</span> ITestService
+    {
+        [OperationContract]
+        <span style="color:blue">int</span> Operation(<span style="color:blue">int</span> value);
+    }</pre>
+</div>
+<ul>
+<li>Client side service interface </li></ul>
+<p><em>without SyncWcf</em> (you have to write it by hand)</p>
+<div style="background-color:white; color:black">
+<pre>    [ServiceContract]
+    <span style="color:blue">public</span> <span style="color:blue">interface</span> ITestService
+    {
+        [OperationContract(AsyncPattern = <span style="color:blue">true</span>)]
+        IAsyncResult BeginOperation(<span style="color:blue">int</span> value, AsyncCallback callback, <span style="color:blue">object</span> state);
+        
+        <span style="color:blue">int</span> EndOperation(IAsyncResult result);
+    }</pre>
+</div>
+<p><br>
+<em>with SyncWcf</em> (nothing to write and maintain)</p>
+<div style="background-color:white; color:black">
+<pre>     <span style="color:green">//simply import the portable assembly that contains the service interface definition</span></pre>
+</div>
+<ul>
+<li>Client side service call </li></ul>
+<p><em>without SyncWcf</em> (using the Async version of the Interface you have written by hand)</p>
+<div style="background-color:white; color:black">
+<pre>    ITestService testService = <span style="color:blue">new</span> ChannelFactory&lt;ITestService&gt;(<span style="color:#a31515">&quot;*&quot;</span>).CreateChannel();
+    <span style="color:green">// [...]</span>
+    AsyncCallback asyncCallBack = <span style="color:blue">delegate</span>(IAsyncResult result)
+    {
+        <span style="color:blue">int</span> value = ((<span style="color:blue">int</span>)result.AsyncState).EndOperation(result);
+        <span style="color:blue">this</span>.Dispatcher.BeginInvoke(<span style="color:blue">delegate</span>
+        {
+            <span style="color:green">// [...] Do something with the result</span>
+        });
+    };
+    testService.BeginOperation(1, asyncCallBack, testService);</pre>
+</div>
+<p><br>
+<em>with SyncWcf</em> (using the Sync version of the Interface in the portable library)</p>
+<div style="background-color:white; color:black">
+<pre>    <span style="color:blue">var</span> channel = <span style="color:blue">new</span> AsyncChannelFactory&lt;ITestService&gt;().CreateChannel();
+
+    channel.ExecuteAsync(
+        ws =&gt; ws.Operation(1),
+        result =&gt; 
+        {
+             <span style="color:green">// [...] Do something with the result</span>
+        });</pre>
+</div>
+<ul>
+<li>Client side service configurationfile (ServiceReferences.ClientConfig) </li></ul>
+<p><em>without SyncWcf</em></p>
+<div style="background-color:white; color:black">
+<pre>    <span style="color:blue">&lt;</span><span style="color:#a31515">client</span><span style="color:blue">&gt;</span>
+        <span style="color:blue">&lt;</span><span style="color:#a31515">endpoint</span> 
+            <span style="color:red">address</span><span style="color:blue">=</span><span style="color:black">&quot;</span><span style="color:blue">../TestService.svc</span><span style="color:black">&quot;</span> 
+            <span style="color:red">binding</span><span style="color:blue">=</span><span style="color:black">&quot;</span><span style="color:blue">customBinding</span><span style="color:black">&quot;</span>
+            <span style="color:red">bindingConfiguration</span><span style="color:blue">=</span><span style="color:black">&quot;</span><span style="color:blue">CustomBinding_ITestService</span><span style="color:black">&quot;</span> 
+            <span style="color:red">contract</span><span style="color:blue">=</span><span style="color:black">&quot;</span><span style="color:blue">PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.ITestService</span><span style="color:black">&quot;</span>
+            <span style="color:red">name</span><span style="color:blue">=</span><span style="color:black">&quot;</span><span style="color:blue">CustomBinding_ITestService</span><span style="color:black">&quot;</span> 
+        <span style="color:blue">/&gt;</span>
+    <span style="color:blue">&lt;/</span><span style="color:#a31515">client</span><span style="color:blue">&gt;</span></pre>
+</div>
+<p><br>
+<em>with SyncWcf</em> (just ad &quot;.Async&quot; at the namespace that identifies where the service interface is)</p>
+<div style="background-color:white; color:black">
+<pre>    <span style="color:blue">&lt;</span><span style="color:#a31515">client</span><span style="color:blue">&gt;</span>
+        <span style="color:blue">&lt;</span><span style="color:#a31515">endpoint</span> 
+            <span style="color:red">address</span><span style="color:blue">=</span><span style="color:black">&quot;</span><span style="color:blue">../TestService.svc</span><span style="color:black">&quot;</span> 
+            <span style="color:red">binding</span><span style="color:blue">=</span><span style="color:black">&quot;</span><span style="color:blue">customBinding</span><span style="color:black">&quot;</span>
+            <span style="color:red">bindingConfiguration</span><span style="color:blue">=</span><span style="color:black">&quot;</span><span style="color:blue">CustomBinding_ITestService</span><span style="color:black">&quot;</span> 
+            <span style="color:red">contract</span><span style="color:blue">=</span><span style="color:black">&quot;</span><span style="color:blue">PhotoAtomic.Communication.Wcf.Silverlight.Interface.Test.Async.ITestService</span><span style="color:black">&quot;</span>
+            <span style="color:red">name</span><span style="color:blue">=</span><span style="color:black">&quot;</span><span style="color:blue">CustomBinding_ITestService</span><span style="color:black">&quot;</span> 
+        <span style="color:blue">/&gt;</span>
+    <span style="color:blue">&lt;/</span><span style="color:#a31515">client</span><span style="color:blue">&gt;</span></pre>
+</div>
+<p><br>
+As you can see by using SyncWcf the code looks a way better and it is a lot simpler. moreover, by default the result callback is dispatched con the calling thread so there is no synch problem with the UI in Silverlight.</p>
+<p>Last but not least: all the call are strongly typed, with a large use of type auto inferred: total intellisense support.</p>
+<h1>Current Version</h1>
+<p>Current version is used in a real project, it resembles the WCF&rsquo;s ChannelFactory &ndash; Channel pattern.
+<br>
+Version <a title="Release 2.0.1.0" href="http://syncwcf.codeplex.com/releases/view/71645" target="_blank">
+Version 2.0.1.0</a> could be considered the first production grade release. Anyway please let me know any feedback you have, areas that requires improvements and ideas, I&rsquo;ll be glad to know your point of view to make the library evolve in the right direction</p>
+<p><strong><a href="https://syncwcf.codeplex.com/releases/view/624762">Version 3.0.0.0</a></strong>&nbsp;is a Silverlight 5 revamp of the project in Visual Studio 2015. Five year later, it adds support for native Task and for generic services. The former is
+ extensively tested, while the latter is derived from a community proposed patch, but&nbsp;it hasn't tested it carefully.</p>
+<h1>License</h1>
+<p>The project is free for use</p>
+<h1>About the author</h1>
+<p><a href="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=266887"><img title="Mosè Bottacini" src="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=266888" alt="Mosè Bottacini" width="149" height="173" align="left" border="0" style="padding-left:0px; padding-right:0px; display:inline; float:left; padding-top:0px; border-width:0px"></a></p>
+<p>Mos&egrave; Bottacini</p>
+<p><a href="http://www.photoatomiclab.net">PhotoAtomic Research Lab.</a> <br>
+Technical Leader</p>
+<p>Facebook: <a title="http://www.facebook.com/mose.bottacini" href="http://www.facebook.com/mose.bottacini">
+http://www.facebook.com/mose.bottacini</a></p>
+<p>Twitter: <a href="http://twitter.com/PhotoAtomicLab" target="_blank">@PhotoAtomicLab</a></p>
+</div><div class="ClearBoth"></div>

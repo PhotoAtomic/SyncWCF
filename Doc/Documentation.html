@@ -1,0 +1,43 @@
+<div class="wikidoc">
+<h1>How it works</h1>
+<p>SyncWcf is essentially a wrapper that sits on top of the ChannelFactory and IChannel classes and interfaces of the standard WCF implementation for Silverlight.</p>
+<p>It is composed by 2 main classes that “wraps” the ChannelFactory (AsyncChannelFactory&lt;TSync&gt;) and IChannel (AsyncChannel&lt;TSync&gt;), and by two helper class that are used internally (TypeGenerator and Assigner&lt;T&gt;).</p>
+<p align="center"><a href="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=271594"><img title="image" alt="image" src="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=271595" width="343" height="286" style="display:inline"></a></p>
+<h3>&#160;</h3>
+<h3>AsyncChannel</h3>
+<p><a href="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=271596"><img title="image" alt="image" src="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=271597" width="230" height="210" style="display:inline"></a></p>
+<p>Wraps an asynchronous version of TSync IChannel that implements the Begin&lt;Operation&gt; End&lt;Operation&gt; pattern. by exposing it as it was synchronous-like call on the syncrhonous interface&lt;TSync&gt;</p>
+<p>Basically when you have to consume a service in Silverlight you have to re-write an async version of your service that a server side is instead exposed as implementation of an interface (TSync).</p>
+<p>The idea of this class is to provide a set of methods that allows the user to consume the service by using the same method on TSync and not their async version, that is complex to maintain, time consuming to write, and difficult to invoke.</p>
+<p>Moreover this class exposes similar methods and properties of the ones contained by the IChannel interface, where they have sense for this scenario.</p>
+<p>For example the State property will reports the status of the channel, Open, Close, Abort (with all their overloads) performs the same operations supposed by an object that implements IChannel but following the sync-like style.</p>
+<p>ExecuteAsync is the heart of this class and of the entire library: it allows to execute operations on the TSync interface, in an asynchronous way.</p>
+<p>This class has a private constructor therefore instances of this class can be obtained uniquely by using the AsyncChannelFactory class.</p>
+<h3>AsyncChannelFactory</h3>
+<p><a href="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=271598"><img title="image" alt="image" src="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=271599" width="240" height="146" style="display:inline"></a></p>
+<p>This class has the ability to build a new channel, in a similar way the ChannelFactory usually does for WCF.</p>
+<p>The main purposes of this class is to create a channel by calling the “CreateChannel” method on it. It has a set of overloads that replicate the normal “CreateChannel” method overloads for WCF (where they have sense for the asynchronous scenario this library
+ targets). Moreover it allows to access to the channel credentials trough the “Credential” property.</p>
+<p>the difference form the normal Silverlight Channel factory is that AsyncChannelFactory takes a generic argument that MUST be an interface type, and represent the service interface.</p>
+<p>The interesting part is that this interface is in “Synchronous” style, without the Begin&lt;Operation&gt;, End&lt;Operation&gt; method pair for each &lt;Operation&gt; implemented at server side. In fact if you share the service interface in a Portable Library
+ assembly you can share exactly the same interface between your server and your client, and therefore exactly the same data types.
+</p>
+<p>And this is a tremendous power in your hand: </p>
+<ul>
+<li>no need to rewrite code for the Asynchronous version of your service. </li><li>zero chance to make errors </li><li>always updated client version of the service interface </li><li>no way to call an older version of method interface as you are really sharing the same interface type between server and client.
+</li></ul>
+<p>The CreateChannel method eventually enables to obtain a fully intialized version of the AsyncChannel class, which in turn could be used to perform Asynchrnous call to the service in Synchronous-like way.
+</p>
+<p>Internally it uses the TypeGenerator class to obtain an asynchronous version of the synchronous interface of the channel</p>
+<h3>TypeGenerator</h3>
+<p><a href="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=271600"><img title="image" alt="image" src="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=271601" width="240" height="102" style="display:inline"></a></p>
+<p>This is an helper class used to dynamically generate asynchronous version that respects the Begin&lt;Operation&gt; End&lt;Operation&gt; pattern of a sync style interface.</p>
+<p>it is important to note that this class doesn’t generates any proxy: it only emits a Type that represent an interface.</p>
+<h3>Assigner</h3>
+<p><a href="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=271602"><img title="image" alt="image" src="http://download.codeplex.com/download?ProjectName=syncwcf&DownloadId=271603" width="181" height="118" style="display:inline"></a></p>
+<p>This is an helper class used by the AsyncChannel class in case the invoked method has out or ref parameters, and it is used to assign the return values back to these parameters before the &quot;responseAction” is invoked, so the user code in the responseAction
+ will find these out and ref parameters already updated with the values provided by the service.</p>
+<p>To perform the assignation this class emits code as DynamicMethod, so it could be garbage collected when they are no more necessary, no proxy are generated, and the IL is emitted trough the use of Expression for maximum safety and optimization, no direct
+ IL opcode emit is performed.</p>
+<p>Moreover, as code emit could be slow, this is performed only when it is absolutely necessary, if a webservice has no out nor ref parameters for an operation, zero code is emitted so absolutely no performance penalty happens.</p>
+</div><div class="ClearBoth"></div>
